@@ -1,0 +1,4 @@
+source https://www.nuget.org/api/v2
+nuget Microsoft.NET.Sdk.Functions
+nuget Microsoft.Azure.WebJobs.Extensions.Http
+nuget FSharp.Core
