@@ -1,3 +1,6 @@
 Microsoft.NET.Sdk.Functions
 Microsoft.Azure.WebJobs.Extensions.Http
 FSharp.Core
+FSharp.Data
+FSharp.Azure.Storage
+Microsoft.Azure.WebJobs.Extensions.Storage
