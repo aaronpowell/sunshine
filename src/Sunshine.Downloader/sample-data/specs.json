@@ -1,0 +1,14 @@
+{
+    "device": {
+        "modelId": "",
+        "modelIdDescr": "",
+        "meterCompatibility": true,
+        "deviceId": "",
+        "inputChannelNumber": 2,
+        "outputPhaseNumber": 1,
+        "ethernetPresence": false
+    },
+    "logger": {
+        "macAddress": ""
+    }
+}

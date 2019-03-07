@@ -6,6 +6,19 @@
       "type": "coreclr",
       "request": "attach",
       "processId": "${command:azureFunctions.pickProcess}"
+    },
+    {
+      "name": ".NET Core Docker Attach",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickRemoteProcess}",
+      "pipeTransport": {
+          "pipeProgram": "docker",
+          "pipeArgs": [ "exec", "-i", "sunshine-downloader" ],
+          "debuggerPath": "/vsdbg/vsdbg",
+          "pipeCwd": "${workspaceRoot}",
+          "quoteArgs": false
+      }
     }
   ]
 }

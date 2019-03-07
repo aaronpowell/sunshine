@@ -52,6 +52,18 @@
       }
     },
     {
+      "label": "publish:debug",
+      "command": "dotnet publish --configuration Debug",
+      "type": "shell",
+      "dependsOn": "build",
+      "problemMatcher": "$msCompile",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe"
+        }
+      }
+    },
+    {
       "type": "func",
       "dependsOn": "build",
       "options": {
@@ -63,6 +75,28 @@
       "command": "host start",
       "isBackground": true,
       "problemMatcher": "$func-watch"
+    },
+    {
+      "label": "docker build",
+      "type": "shell",
+      "dependsOn": "publish:debug",
+      "isBackground": true,
+      "command": "docker build -t sunshine-downloader .",
+      "options": {
+        "cwd": "${workspaceFolder}/src/Sunshine.Downloader"
+      }
+    },
+    {
+      "label": "docker run",
+      "type": "shell",
+      "command": "docker run --rm --name sunshine-downloader --env-file=.env sunshine-downloader",
+      "dependsOn": "docker build",
+      "problemMatcher": [
+        "$msCompile"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/src/Sunshine.Downloader"
+      }
     }
   ]
 }

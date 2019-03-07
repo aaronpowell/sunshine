@@ -5,3 +5,5 @@ bin
 obj
 paket-files
 packages
+
+.env
