@@ -1,0 +1,16 @@
+{
+    "Devices": [{
+        "device_id": "",
+        "type": "",
+        "device_type": "",
+        "device_model": "",
+        "points": [{
+            "name": "",
+            "unit": "",
+            "description": "",
+            "type": "",
+            "kind": "",
+            "decimal_precision": 0
+        }]
+    }]
+}
