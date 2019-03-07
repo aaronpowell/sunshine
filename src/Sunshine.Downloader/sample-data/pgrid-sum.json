@@ -1,0 +1,21 @@
+{
+    "feeds": {
+        "DeviceId": {
+            "feedIntervals": [""],
+            "description": "",
+            "datastreams": {
+                "Pgrid": {
+                    "data": [{
+                        "value": 0.0,
+                        "timestamp": ""
+                    }],
+                    "decimal_precision": 2,
+                    "title": "",
+                    "units": "",
+                    "class": "",
+                    "priority": 0
+                }
+            }
+        }
+    }
+}

@@ -4,6 +4,7 @@ open System
 open InverterApi
 open Specs
 open LiveData
+open Feeds
 
 let gev s = Environment.GetEnvironmentVariable s
 
@@ -15,21 +16,29 @@ let toS o = o.ToString()
 
 [<EntryPoint>]
 let main _ =
-    let token = getAuthToken username password
-    let getData' = getData token (Uri baseUrl)
+   async {
+            let token = getAuthToken username password
+            let getData' = getData token (Uri baseUrl)
 
-    let specs = (getSpec getData') |> Async.RunSynchronously
-    let deviceId = specs.Device.DeviceId |> toS
+            let! specs = getSpec getData'
+            let deviceId = specs.Device.DeviceId |> toS
 
-    let liveListData = (getLiveList getData') |> Async.RunSynchronously
+            let! liveListData = getLiveList getData'
 
-    let deviceLive = liveListData.Devices
-                     |> Array.filter (fun d -> d.DeviceId |> toS = deviceId)
+            let deviceLive = liveListData.Devices
+                             |> Array.filter (fun d -> d.DeviceId |> toS = deviceId)
 
-    match deviceLive |> Array.tryExactlyOne with
-    | Some device ->
-        printfn "Found it!"
-    | None ->
-        printfn "Well that shouldn't have happened..."
+            match deviceLive |> Array.tryExactlyOne with
+            | Some device ->
+                let! pgridFeed = getPgridFeed getData' DateTime.Today deviceId
 
-    0 // return an integer exit code
+                match pgridFeed with
+                | Some feed ->
+                    printfn "Found the data feed"
+                | None ->
+                    printfn "Didn't find feed"
+            | None ->
+                printfn "Well that shouldn't have happened..."
+
+            return 0
+    } |> Async.RunSynchronously
