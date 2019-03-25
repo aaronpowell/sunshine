@@ -1,0 +1,17 @@
+{
+    "device_id": {
+        "device_id": "",
+        "device_type": "",
+        "device_model": "",
+        "timestamp": "2019-03-07T16:30:29+1100",
+        "points": [{
+            "name": "CountryStd",
+            "value": 75.0
+        }]
+    },
+    "logger_id": {
+        "device_id": "",
+        "timestamp": "2019-03-07T16:31:41+1100",
+        "points": []
+    }
+}
