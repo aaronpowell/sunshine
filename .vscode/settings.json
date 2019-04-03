@@ -2,8 +2,9 @@
   "azureFunctions.projectRuntime": "~2",
   "azureFunctions.projectLanguage": "C#",
   "azureFunctions.templateFilter": "Verified",
-  "azureFunctions.deploySubpath": "src/Sunshin.Functions/bin/Release/netcoreapp2.1/publish",
+  "azureFunctions.deploySubpath": "src/Sunshine.Functions/bin/Debug/netcoreapp2.1/publish",
   "azureFunctions.preDeployTask": "publish",
+  "azureFunctions.projectSubpath": "src/Sunshine.Functions/bin/Debug/netcoreapp2.1/",
   "debug.internalConsoleOptions": "neverOpen",
   "FSharp.fsacRuntime": "netcore",
   "terminal.integrated.shell.windows": "C:\\WINDOWS\\SysWow64\\WindowsPowerShell\\v1.0\\powershell.exe"
