@@ -9,6 +9,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sunshine.Functions", "src\S
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sunshine.Downloader", "src\Sunshine.Downloader\Sunshine.Downloader.fsproj", "{38D52F1C-3AA6-4B6B-ABEF-4D07372A47F0}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sunshine.MockApi", "src\Sunshine.MockApi\Sunshine.MockApi.fsproj", "{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,9 +48,22 @@ Global
 		{38D52F1C-3AA6-4B6B-ABEF-4D07372A47F0}.Release|x64.Build.0 = Release|Any CPU
 		{38D52F1C-3AA6-4B6B-ABEF-4D07372A47F0}.Release|x86.ActiveCfg = Release|Any CPU
 		{38D52F1C-3AA6-4B6B-ABEF-4D07372A47F0}.Release|x86.Build.0 = Release|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Debug|x64.Build.0 = Debug|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Debug|x86.Build.0 = Debug|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Release|x64.ActiveCfg = Release|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Release|x64.Build.0 = Release|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Release|x86.ActiveCfg = Release|Any CPU
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A53A8E28-1653-43C1-8912-71AF59FAF9F8} = {DF737DE0-5FAC-4D96-8689-FB149B4BADE1}
 		{38D52F1C-3AA6-4B6B-ABEF-4D07372A47F0} = {DF737DE0-5FAC-4D96-8689-FB149B4BADE1}
+		{DEDBE4C2-E8E2-4D66-ACA9-5FABC7827335} = {DF737DE0-5FAC-4D96-8689-FB149B4BADE1}
 	EndGlobalSection
 EndGlobal
