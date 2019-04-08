@@ -14,12 +14,15 @@ let pgridFeedUrl (date : DateTime) =
 
 let getPgridFeed getData date (deviceId : string) =
     async {
-        let! data = pgridFeedUrl date
-                    |> getData
-        let parsed = PgridFeed.Parse data
+        try
+           let! data = pgridFeedUrl date
+                       |> getData
+           let parsed = PgridFeed.Parse data
 
-        return parsed.Feeds.JsonValue.Properties()
-               |> Array.filter (fun (p, _) -> p.EndsWith(deviceId.Replace("\"", "")))
-               |> Array.map (fun (_, v) -> PgridFeed.DeviceId v)
-               |> Array.tryExactlyOne
+           return parsed.Feeds.JsonValue.Properties()
+                  |> Array.filter (fun (p, _) -> p.EndsWith(deviceId.Replace("\"", "")))
+                  |> Array.map (fun (_, v) -> PgridFeed.DeviceId v)
+                  |> Array.tryExactlyOne
+        with
+        | _ -> return None
     }

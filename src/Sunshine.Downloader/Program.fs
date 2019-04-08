@@ -16,6 +16,7 @@ let password = gev "SUNSHINE_PASSWORD"
 [<EntryPoint>]
 let main _ =
    async {
+            // do! System.Threading.Tasks.Task.Delay(5000) |> Async.AwaitTask
             let token = getAuthToken username password
             let getData' = getData token (Uri baseUrl)
 

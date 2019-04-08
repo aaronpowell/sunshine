@@ -5,12 +5,7 @@
       "label": "clean",
       "command": "dotnet clean",
       "type": "shell",
-      "problemMatcher": "$msCompile",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe"
-        }
-      }
+      "problemMatcher": "$msCompile"
     },
     {
       "label": "build",
@@ -21,63 +16,40 @@
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": "$msCompile",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe"
-        }
-      }
+      "problemMatcher": "$msCompile"
     },
     {
       "label": "clean release",
       "command": "dotnet clean --configuration Release",
       "type": "shell",
-      "problemMatcher": "$msCompile",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe"
-        }
-      }
+      "problemMatcher": "$msCompile"
     },
     {
       "label": "publish",
       "command": "dotnet publish --configuration Release",
       "type": "shell",
       "dependsOn": "clean release",
-      "problemMatcher": "$msCompile",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe"
-        }
-      }
+      "problemMatcher": "$msCompile"
     },
     {
       "label": "publish:debug",
       "command": "dotnet publish --configuration Debug",
       "type": "shell",
       "dependsOn": "build",
-      "problemMatcher": "$msCompile",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe"
-        }
-      }
+      "problemMatcher": "$msCompile"
     },
     {
       "type": "func",
       "dependsOn": "build",
       "options": {
-        "cwd": "${workspaceFolder}/src/Sunshine.Functions/bin/Debug/netcoreapp2.1",
-        "shell": {
-          "executable": "powershell.exe"
-        }
+        "cwd": "${workspaceFolder}/src/Sunshine.Functions/bin/Debug/netcoreapp2.1"
       },
       "command": "host start",
       "isBackground": true,
       "problemMatcher": "$func-watch"
     },
     {
-      "label": "docker build",
+      "label": "docker build (downloader)",
       "type": "shell",
       "dependsOn": "publish:debug",
       "isBackground": true,
@@ -87,16 +59,59 @@
       }
     },
     {
-      "label": "docker run",
+      "label": "docker run (downloader)",
       "type": "shell",
       "command": "docker run --rm --name sunshine-downloader --env-file=.env sunshine-downloader",
-      "dependsOn": "docker build",
+      "dependsOn": "docker build (downloader)",
       "problemMatcher": [
         "$msCompile"
       ],
       "options": {
         "cwd": "${workspaceFolder}/src/Sunshine.Downloader"
       }
+    },
+    {
+      "label": "docker build (mock api)",
+      "type": "shell",
+      "isBackground": true,
+      "command": "docker build -t sunshine-mockapi .",
+      "options": {
+        "cwd": "${workspaceFolder}/src/Sunshine.MockApi"
+      }
+    },
+    {
+      "label": "docker run (mock api)",
+      "type": "shell",
+      "command": "docker run --rm --name sunshine-mockapi -p 8080:80 sunshine-mockapi",
+      "dependsOn": "docker build (mock api)",
+      "problemMatcher": [
+        "$msCompile"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/src/Sunshine.MockApi"
+      }
+    },
+    {
+      "label": "docker build",
+      "type": "shell",
+      "dependsOn": [
+        "docker build (downloader)",
+        "docker build (mock api)"
+      ],
+      "problemMatcher": [
+        "$msCompile"
+      ]
+    },
+    {
+      "label": "docker run",
+      "type": "shell",
+      "dependsOn": [
+        "docker run (downloader)",
+        "docker run (mock api)"
+      ],
+      "problemMatcher": [
+        "$msCompile"
+      ]
     }
   ]
 }

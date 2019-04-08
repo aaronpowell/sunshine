@@ -8,13 +8,26 @@
       "processId": "${command:azureFunctions.pickProcess}"
     },
     {
-      "name": ".NET Core Docker Attach",
+      "name": ".NET Core Docker Attach (downloader)",
       "type": "coreclr",
       "request": "attach",
       "processId": "${command:pickRemoteProcess}",
       "pipeTransport": {
           "pipeProgram": "docker",
           "pipeArgs": [ "exec", "-i", "sunshine-downloader" ],
+          "debuggerPath": "/vsdbg/vsdbg",
+          "pipeCwd": "${workspaceRoot}",
+          "quoteArgs": false
+      }
+    },
+    {
+      "name": ".NET Core Docker Attach (mock api)",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickRemoteProcess}",
+      "pipeTransport": {
+          "pipeProgram": "docker",
+          "pipeArgs": [ "exec", "-i", "sunshine-mockapi" ],
           "debuggerPath": "/vsdbg/vsdbg",
           "pipeCwd": "${workspaceRoot}",
           "quoteArgs": false

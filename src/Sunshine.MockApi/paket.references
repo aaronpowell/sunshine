@@ -1,0 +1,6 @@
+FSharp.Core
+
+group MockApi.Server
+    Saturn
+    Microsoft.AspNetCore
+    Microsoft.AspNetCore.StaticFiles

@@ -13,7 +13,18 @@ let getLiveList getData deviceId =
     async {
         let! data = getData listUrlPath
 
-        return (LiveList.Parse data).Devices
+        let parsedData = (LiveList.Parse data)
+
+        printfn "Raw: %s" data
+        printfn "Obj: %A" parsedData
+        printfn "All: %A" parsedData.Devices
+        printfn "First: %A" parsedData.Devices.[0]
+        printfn "Second: %A" parsedData.Devices.[1]
+
+        return parsedData.Devices
+               |> Array.map(fun d ->
+                        printfn "Device: %A" d
+                        d)
                |> Array.filter (fun d -> d.DeviceId |> toS = deviceId)
                |> Array.tryExactlyOne
     }

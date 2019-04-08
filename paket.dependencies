@@ -8,3 +8,9 @@ group Functions
     nuget Microsoft.Azure.WebJobs.Extensions.Storage
     nuget Microsoft.NET.Sdk.Functions >= 1.0.26
     nuget Microsoft.Azure.WebJobs.Extensions.Http
+
+group MockApi.Server
+    source https://www.nuget.org/api/v2
+    nuget Saturn
+    nuget Microsoft.AspNetCore
+    nuget Microsoft.AspNetCore.StaticFiles
