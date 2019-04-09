@@ -3,6 +3,5 @@ FSharp.Data
 
 group Functions
     Microsoft.NET.Sdk.Functions
-    Microsoft.Azure.WebJobs.Extensions.Http
-    FSharp.Azure.Storage
+    Microsoft.Azure.WebJobs.Extensions.EventHubs
     Microsoft.Azure.WebJobs.Extensions.Storage

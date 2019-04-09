@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+  mock-api:
+    image: sunshine-mockapi
+    build:
+      context: ./Sunshine.MockApi
+      dockerfile: Dockerfile
+
+  downloader:
+    image: sunshine-downloader
+    build:
+      context: ./Sunshine.Downloader
+      dockerfile: Dockerfile
+    env_file:
+      - ./Sunshine.Downloader/.env
+    stdin_open: true
+    tty: true
+
+  functions:
+      image: sunshine-functions
+      build:
+        context: ./Sunshine.Functions
+        dockerfile: Dockerfile

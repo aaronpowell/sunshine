@@ -51,7 +51,6 @@
     {
       "label": "docker build (downloader)",
       "type": "shell",
-      "dependsOn": "publish:debug",
       "isBackground": true,
       "command": "docker build -t sunshine-downloader .",
       "options": {
@@ -63,12 +62,10 @@
       "type": "shell",
       "command": "docker run --rm -it --name sunshine-downloader --env-file=.env sunshine-downloader",
       "dependsOn": "docker build (downloader)",
-      "problemMatcher": [
-        "$msCompile"
-      ],
       "options": {
         "cwd": "${workspaceFolder}/src/Sunshine.Downloader"
-      }
+      },
+      "problemMatcher": []
     },
     {
       "label": "docker build (mock api)",
@@ -84,34 +81,50 @@
       "type": "shell",
       "command": "docker run --rm --name sunshine-mockapi -p 8080:80 sunshine-mockapi",
       "dependsOn": "docker build (mock api)",
-      "problemMatcher": [
-        "$msCompile"
-      ],
       "options": {
         "cwd": "${workspaceFolder}/src/Sunshine.MockApi"
-      }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker build (functions)",
+      "type": "shell",
+      "isBackground": true,
+      "command": "docker build -t sunshine-functions .",
+      "options": {
+        "cwd": "${workspaceFolder}/src/Sunshine.Functions"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker run (functions)",
+      "type": "shell",
+      "command": "docker run --rm --name sunshine-functions -p 8081:80 --env-file=.env sunshine-functions",
+      "dependsOn": "docker build (functions)",
+      "options": {
+        "cwd": "${workspaceFolder}/src/Sunshine.Functions"
+      },
+      "problemMatcher": []
     },
     {
       "label": "docker build",
       "type": "shell",
       "dependsOn": [
         "docker build (downloader)",
-        "docker build (mock api)"
+        "docker build (mock api)",
+        "docker build (functions)"
       ],
-      "problemMatcher": [
-        "$msCompile"
-      ]
+      "problemMatcher": []
     },
     {
       "label": "docker run",
       "type": "shell",
       "dependsOn": [
         "docker run (downloader)",
-        "docker run (mock api)"
+        "docker run (mock api)",
+        "docker run (functions)"
       ],
-      "problemMatcher": [
-        "$msCompile"
-      ]
+      "problemMatcher": []
     }
   ]
 }

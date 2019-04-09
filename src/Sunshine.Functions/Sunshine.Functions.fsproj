@@ -5,11 +5,7 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="models/Payload.fs" />
-    <Compile Include="models/Device.fs" />
-    <Compile Include="models/Point.fs" />
-    <Compile Include="AzureTableUtils.fs" />
-    <Compile Include="ReceiveData.fs" />
+    <Compile Include="IoTHubTrigger.fs" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

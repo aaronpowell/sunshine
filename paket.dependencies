@@ -1,16 +1,15 @@
-source https://www.nuget.org/api/v2
+source https://api.nuget.org/v3/index.json
 nuget FSharp.Core
 nuget FSharp.Data >= 3.0.0
 
 group Functions
-    source https://www.nuget.org/api/v2
-    nuget FSharp.Azure.Storage = 3.1.0
-    nuget Microsoft.Azure.WebJobs.Extensions.Storage
+    source https://api.nuget.org/v3/index.json
     nuget Microsoft.NET.Sdk.Functions >= 1.0.26
-    nuget Microsoft.Azure.WebJobs.Extensions.Http
+    nuget Microsoft.Azure.WebJobs.Extensions.EventHubs
+    nuget Microsoft.Azure.WebJobs.Extensions.Storage
 
 group MockApi.Server
-    source https://www.nuget.org/api/v2
+    source https://api.nuget.org/v3/index.json
     nuget Saturn
     nuget Microsoft.AspNetCore
     nuget Microsoft.AspNetCore.StaticFiles
