@@ -61,7 +61,7 @@
     {
       "label": "docker run (downloader)",
       "type": "shell",
-      "command": "docker run --rm --name sunshine-downloader --env-file=.env sunshine-downloader",
+      "command": "docker run --rm -it --name sunshine-downloader --env-file=.env sunshine-downloader",
       "dependsOn": "docker build (downloader)",
       "problemMatcher": [
         "$msCompile"

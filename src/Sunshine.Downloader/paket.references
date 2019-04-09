@@ -1,2 +1,5 @@
 FSharp.Core
 FSharp.Data
+
+group Device
+    Microsoft.Azure.Devices.Client

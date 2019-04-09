@@ -14,3 +14,7 @@ group MockApi.Server
     nuget Saturn
     nuget Microsoft.AspNetCore
     nuget Microsoft.AspNetCore.StaticFiles
+
+group Device
+    source https://api.nuget.org/v3/index.json
+    nuget Microsoft.Azure.Devices.Client
