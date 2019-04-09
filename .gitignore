@@ -7,3 +7,9 @@ paket-files
 packages
 
 .env
+
+/.paket/*
+!/.paket/*.proj
+!/.paket/*.exe.config
+!/.paket/*.props
+!/.paket/*.targets
