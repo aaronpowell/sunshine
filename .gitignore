@@ -13,3 +13,5 @@ packages
 !/.paket/*.exe.config
 !/.paket/*.props
 !/.paket/*.targets
+
+.vs
