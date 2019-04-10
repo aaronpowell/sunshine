@@ -32,4 +32,6 @@ let getLiveData next ctx =
 
     let inverter = Inverter(inverterId, now, inverterPoints)
 
-    json [(loggerId, logger); (inverterId, inverter :> Device)] next ctx
+    let data = [(loggerId, logger); (inverterId, inverter :> Device)] |> Map.ofList
+
+    json data next ctx

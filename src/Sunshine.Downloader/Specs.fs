@@ -8,7 +8,16 @@ let urlPath = "/v1/specs"
 
 let getSpec getData =
     async {
-        let! data = getData urlPath
+        try
+            let! data = getData urlPath
+            return Spec.Parse data
 
-        return Spec.Parse data
+        with
+        | _ ->
+            printfn "hmm looks like the API isn't available yet, let's sleep a bit"
+
+            do! Async.Sleep 30000
+
+            let! data = getData urlPath
+            return Spec.Parse data
     }
