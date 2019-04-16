@@ -5,7 +5,11 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="IoTHubTrigger.fs" />
+    <Compile Include="../Shared/LiveData.fs" />
+    <Compile Include="LiveDataTrigger.fs" />
+    <Compile Include="LiveListTrigger.fs" />
+    <Compile Include="../Shared/FeedData.fs" />
+    <Compile Include="FeedTrigger.fs" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

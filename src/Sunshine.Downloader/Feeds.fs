@@ -1,9 +1,8 @@
-module Feeds
+module FeedDownloader
 
+open FeedData
 open FSharp.Data
 open System
-
-type PgridFeed = JsonProvider<"./sample-data/pgrid-sum.json">
 
 let feedUrl = "/v1/feeds/"
 

@@ -6,8 +6,11 @@
   <ItemGroup>
     <Compile Include="Utils.fs" />
     <Compile Include="InverterApi.fs" />
+    <Compile Include="../Shared/SpecsData.fs" />
     <Compile Include="Specs.fs" />
+    <Compile Include="../Shared/LiveData.fs" />
     <Compile Include="LiveData.fs" />
+    <Compile Include="../Shared/FeedData.fs" />
     <Compile Include="Feeds.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

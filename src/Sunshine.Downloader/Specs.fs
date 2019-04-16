@@ -1,8 +1,6 @@
 module Specs
 
-open FSharp.Data
-
-type Spec = JsonProvider<"./sample-data/specs.json">
+open SpecsData
 
 let urlPath = "/v1/specs"
 

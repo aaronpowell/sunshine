@@ -1,8 +1,8 @@
 ﻿open System
 open InverterApi
 open Specs
-open LiveData
-open Feeds
+open LiveDataDownloader
+open FeedDownloader
 open Utils
 open Microsoft.Azure.Devices.Client
 

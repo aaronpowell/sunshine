@@ -1,10 +1,8 @@
-module LiveData
+module LiveDataDownloader
 
+open LiveData
 open FSharp.Data
 open Utils
-
-type LiveList = JsonProvider<"./sample-data/live-data-list.json">
-type LiveData = JsonProvider<"./sample-data/live-data.json">
 
 let liveUrlPath = "v1/livedata"
 let listUrlPath = liveUrlPath + "/list"
