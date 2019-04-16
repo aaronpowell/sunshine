@@ -5,9 +5,6 @@ open LiveData
 open Feeds
 open Utils
 open Microsoft.Azure.Devices.Client
-open System.Text
-open System.Configuration
-open System.Threading
 
 let gev s = Environment.GetEnvironmentVariable s
 
@@ -21,7 +18,6 @@ let main _ =
     let iotHubClient = DeviceClient.CreateFromConnectionString(iotHubConnectionString, TransportType.Mqtt)
 
     async {
-            // do! System.Threading.Tasks.Task.Delay(5000) |> Async.AwaitTask
             let token = getAuthToken username password
             let getData' = getData token (Uri baseUrl)
 
@@ -32,18 +28,12 @@ let main _ =
 
             match! getLiveList getData' deviceId with
             | Some liveList ->
-                printfn "Found the live list"
-                printfn "%A" liveList
-
-                do! sendIoTMessage iotHubClient liveList
+                do! sendIoTMessage iotHubClient "liveList" liveList
 
                 let rec dataPoller() = async {
                     match! getLiveData getData' deviceId with
                     | Some liveData ->
-                        printfn "Found the live data"
-                        printfn "%A" liveData
-
-                        do! sendIoTMessage iotHubClient liveData
+                        do! sendIoTMessage iotHubClient "liveData" liveData
 
                     | None ->
                         printfn "Didn't find live data"
@@ -60,8 +50,7 @@ let main _ =
             let rec feedPoller() = async {
                 match! getPgridFeed getData' DateTime.Today deviceId with
                 | Some feed ->
-                    printfn "Found the data feed"
-                    printfn "%A" feed
+                    do! sendIoTMessage iotHubClient "feed" feed
                 | None ->
                     printfn "Didn't find feed"
 
