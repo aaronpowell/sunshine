@@ -72,7 +72,11 @@ let main _ =
             feedPoller() |> Async.Start
 
             printfn "Background jobs running, now we're waiting... "
-            Console.ReadLine() |> ignore
+            if Console.IsInputRedirected then
+                while true do
+                    do! Async.Sleep 300000
+            else
+                Console.ReadLine() |> ignore
 
             return 0
     } |> Async.RunSynchronously
