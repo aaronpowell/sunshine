@@ -14,9 +14,9 @@ let trigger
     ([<EventHubTrigger("live-data", Connection = "IoTHubConnectionString")>] message: string)
     ([<Table("LiveData", Connection = "DataStorageConnectionString")>] liveDataTable: CloudTable)
     (logger: ILogger) =
-        let l = LiveData.Parse message
+        let l = LiveDataDevice.Parse message
 
-        let id = l.DeviceId.DeviceId.ToString()
+        let id = l.DeviceId.ToString()
 
         // let op = TableOperation.Insert(LiveDataEntity("", ""))
 
