@@ -5,6 +5,7 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AzureTableUtils.fs" />
     <Compile Include="../Shared/LiveData.fs" />
     <Compile Include="LiveDataTrigger.fs" />
     <Compile Include="LiveListTrigger.fs" />

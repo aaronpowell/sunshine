@@ -9,6 +9,7 @@ group Functions
     nuget Microsoft.Azure.WebJobs.Extensions.EventHubs
     nuget Microsoft.Azure.WebJobs.Extensions.Storage
     nuget WindowsAzure.Storage = 9.3.1
+    nuget FSharp.Azure.Storage = 3.1.0
 
 group MockApi.Server
     source https://api.nuget.org/v3/index.json

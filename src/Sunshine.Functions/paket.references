@@ -5,3 +5,4 @@ group Functions
     Microsoft.NET.Sdk.Functions
     Microsoft.Azure.WebJobs.Extensions.EventHubs
     Microsoft.Azure.WebJobs.Extensions.Storage
+    FSharp.Azure.Storage
