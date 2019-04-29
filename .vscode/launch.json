@@ -1,6 +1,7 @@
 {
   "version": "0.2.0",
   "configurations": [
+
     {
       "name": "Attach to Functions",
       "type": "coreclr",
@@ -28,6 +29,19 @@
       "pipeTransport": {
           "pipeProgram": "docker",
           "pipeArgs": [ "exec", "-i", "sunshine-mockapi" ],
+          "debuggerPath": "/vsdbg/vsdbg",
+          "pipeCwd": "${workspaceRoot}",
+          "quoteArgs": false
+      }
+    },
+    {
+      "name": ".NET Core Docker Attach (functions)",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickRemoteProcess}",
+      "pipeTransport": {
+          "pipeProgram": "docker",
+          "pipeArgs": [ "exec", "-i", "sunshine-functions" ],
           "debuggerPath": "/vsdbg/vsdbg",
           "pipeCwd": "${workspaceRoot}",
           "quoteArgs": false
