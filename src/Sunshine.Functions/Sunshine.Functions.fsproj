@@ -8,6 +8,8 @@
     <Compile Include="AzureTableUtils.fs" />
     <Compile Include="../Shared/LiveData.fs" />
     <Compile Include="LiveDataTrigger.fs" />
+    <Compile Include="PanelTrigger.fs" />
+    <Compile Include="SummaryTrigger.fs" />
     <Compile Include="LiveListTrigger.fs" />
     <Compile Include="../Shared/FeedData.fs" />
     <Compile Include="FeedTrigger.fs" />

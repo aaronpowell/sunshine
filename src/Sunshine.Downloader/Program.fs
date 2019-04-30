@@ -26,19 +26,34 @@ let main _ =
 
             printfn "Up and running, we found an inverter with the ID %s" deviceId
 
+            let mutable correlationId = Guid.NewGuid()
+
             match! getLiveList getData' deviceId with
             | Some liveList ->
-                do! sendIoTMessage iotHubClient "liveList" liveList
+                let rec listPoller() = async {
+                    do! int(TimeSpan.FromMinutes(5.).TotalMilliseconds) |> Async.Sleep
+                    correlationId <- Guid.NewGuid()
+
+                    match! getLiveList getData' deviceId with
+                    | Some liveList ->
+                        do! sendIoTMessage iotHubClient "liveList" correlationId liveList
+                    | None ->
+                        printfn "Sleep loop failed"
+
+                    listPoller() |> Async.Start
+                }
+                do! sendIoTMessage iotHubClient "liveList" correlationId liveList
+                listPoller() |> Async.Start
 
                 let rec dataPoller() = async {
                     match! getLiveData getData' deviceId with
                     | Some liveData ->
-                        do! sendIoTMessage iotHubClient "liveData" liveData
+                        do! sendIoTMessage iotHubClient "liveData" correlationId liveData
 
                     | None ->
                         printfn "Didn't find live data"
 
-                    do! Async.Sleep 20000
+                    do! int(TimeSpan.FromSeconds(20.).TotalMilliseconds) |> Async.Sleep
                     dataPoller() |> Async.Start
                 }
 
@@ -50,11 +65,11 @@ let main _ =
             let rec feedPoller() = async {
                 match! getPgridFeed getData' DateTime.Today deviceId with
                 | Some feed ->
-                    do! sendIoTMessage iotHubClient "feed" feed
+                    do! sendIoTMessage iotHubClient "feed" correlationId feed
                 | None ->
                     printfn "Didn't find feed"
 
-                do! Async.Sleep 300000
+                do! int(TimeSpan.FromMinutes(5.).TotalMilliseconds) |> Async.Sleep
                 feedPoller() |> Async.Start
             }
 
