@@ -4,6 +4,7 @@ open FSharp.Data
 open System
 
 type LiveList = JsonProvider<"../Shared/sample-data/live-data-list.json">
+type LiveListDevice = JsonProvider<"../Shared/sample-data/live-data-list-device.json", InferTypesFromValues=true>
 type LiveData = JsonProvider<"../Shared/sample-data/live-data.json">
 type LiveDataDevice = JsonProvider<"../Shared/sample-data/live-data-device.json">
 
