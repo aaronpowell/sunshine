@@ -20,6 +20,7 @@ steps:
   inputs:
     command: 'publish'
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    publishWebProjects: false
     zipAfterPublish: true
   displayName: Generate Artifacts
 
