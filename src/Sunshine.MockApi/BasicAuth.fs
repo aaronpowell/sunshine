@@ -26,12 +26,16 @@ type UserService() =
                        | _ -> false
             }
 
+type Credentials =
+     { Username: string
+       Password: string }
+
 let getCreds headerValue =
     let value = AuthenticationHeaderValue.Parse headerValue
     let bytes = Convert.FromBase64String value.Parameter
     let creds = (Encoding.UTF8.GetString bytes).Split([|':'|])
 
-    {| Username = creds.[0]; Password = creds.[1] |}
+    { Username = creds.[0]; Password = creds.[1] }
 
 type BasicAuthHandler(options, logger, encoder, clock, userService : IUserService) =
     inherit AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder, clock)

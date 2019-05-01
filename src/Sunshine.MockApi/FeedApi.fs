@@ -25,6 +25,8 @@ type DeviceFeed =
         Description: string
         Datastreams: DataStream option }
 
+type Response = { Feeds: (string * DeviceFeed) list }
+
 let getFeedData next ctx =
     let logger = { FeedIntervals = [|"raw"|]
                    Description = "http://power-one.com/device/aurora/universal_logger/v1/"
@@ -45,4 +47,4 @@ let getFeedData next ctx =
                      Datastreams = Some(pgrid)
     }
 
-    json {| Feeds = [(loggerId, logger); (inverterId, inverter)] |} next ctx
+    json { Feeds = [(loggerId, logger); (inverterId, inverter)] } next ctx
