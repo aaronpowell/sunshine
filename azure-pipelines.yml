@@ -21,7 +21,28 @@ steps:
     command: 'publish'
     arguments: '--configuration $(BuildConfiguration)'
     publishWebProjects: false
-    zipAfterPublish: true
-  displayName: Generate Artifacts
+    zipAfterPublish: false
+  displayName: dotnet publish
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/src/Sunshine.Downloader/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
+    includeRootFolder: false
+    archiveFile: '$(Build.ArtifactStagingDirectory)/Sunshine.Downloader-$(Build.BuildId).zip'
+  displayName: Archive Downloader
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/src/Sunshine.Functions/bin/$(BuildConfiguration)/netcoreapp2.1/publish'
+    includeRootFolder: false
+    archiveFile: '$(Build.ArtifactStagingDirectory)/Sunshine.Functions-$(Build.BuildId).zip'
+  displayName: Archive Functions
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/src/Sunshine.MockApi/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
+    includeRootFolder: false
+    archiveFile: '$(Build.ArtifactStagingDirectory)/Sunshine.MockApi-$(Build.BuildId).zip'
+  displayName: Archive MockApi
 
 - task: PublishBuildArtifacts@1
