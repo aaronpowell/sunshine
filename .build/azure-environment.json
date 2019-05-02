@@ -383,6 +383,18 @@
                 "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
             ],
             "properties": {}
+        },
+        {
+            "type": "Microsoft.ContainerRegistry/registries",
+            "sku": {
+                "name": "[parameters('registrySku')]"
+            },
+            "name": "[variables('registryName')]",
+            "apiVersion": "2017-10-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "adminUserEnabled": false
+            }
         }
     ],
     "parameters": {
@@ -394,6 +406,13 @@
         },
         "location": {
             "type": "string"
+        },
+        "registrySku": {
+            "defaultValue": "Standard",
+            "type": "String",
+            "metadata": {
+                "description": "The SKU of the container registry."
+            }
         }
     },
     "variables": {
@@ -401,7 +420,8 @@
         "storageName": "[replace(concat(parameters('name'), 'storage'), '-', '')]",
         "appInsightsName": "[concat(parameters('name'), '-app-insights')]",
         "IoTHubsName": "[concat(parameters('name'), '-iot-hub')]",
-        "EventHubsName": "[concat(parameters('name'), '-event-hub')]"
+        "EventHubsName": "[concat(parameters('name'), '-event-hub')]",
+        "registryName": "[concat(parameters('name'), '-cr')]"
     },
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0"
