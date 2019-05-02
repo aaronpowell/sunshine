@@ -1,0 +1,408 @@
+{
+    "resources": [{
+            "name": "[variables('functionAppName')]",
+            "type": "Microsoft.Web/sites",
+            "properties": {
+                "siteConfig": {
+                    "appSettings": [{
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "dotnet"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "DataStorageConnectionString",
+                            "value": ""
+                        },
+                        {
+                            "name": "IoTHubConnectionString",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~2"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[concat(toLower(parameters('name')), 'a179')]"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "10.14.1"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
+                        }
+                    ]
+                },
+                "name": "[variables('functionAppName')]",
+                "clientAffinityEnabled": false,
+                "reserved": false
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]",
+                "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
+            ],
+            "apiVersion": "2016-03-01",
+            "location": "[parameters('location')]",
+            "kind": "functionapp"
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "accountType": "Standard_LRS"
+            }
+        },
+        {
+            "apiVersion": "2015-05-01",
+            "name": "[variables('appInsightsName')]",
+            "type": "Microsoft.Insights/components",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ApplicationId": "[variables('functionAppName')]",
+                "Request_Source": "IbizaWebAppExtensionCreate"
+            }
+        },
+        {
+            "type": "Microsoft.Devices/IotHubs",
+            "apiVersion": "2018-04-01",
+            "name": "[variables('IoTHubsName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "properties": {
+                "operationsMonitoringProperties": {
+                    "events": {
+                        "None": "None",
+                        "Connections": "None",
+                        "DeviceTelemetry": "None",
+                        "C2DCommands": "None",
+                        "DeviceIdentityOperations": "None",
+                        "FileUploadOperations": "None",
+                        "Routes": "None"
+                    }
+                },
+                "ipFilterRules": [],
+                "routing": {
+                    "endpoints": {
+                        "serviceBusQueues": [],
+                        "serviceBusTopics": [],
+                        "eventHubs": [{
+                                "connectionString": "[concat('Endpoint=sb://', variables('IoTHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('IoTHubsName'), ';SharedAccessKey=****;EntityPath=live-data')]",
+                                "name": "sunshine-live-data-eh",
+                                "subscriptionId": "[subscription().id]",
+                                "resourceGroup": "[resourceGroup().name]"
+                            },
+                            {
+                                "connectionString": "[concat('Endpoint=sb://', variables('IoTHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('IoTHubsName'), ';SharedAccessKey=****;EntityPath=live-list')]",
+                                "name": "sunshine-live-list-eh",
+                                "subscriptionId": "[subscription().id]",
+                                "resourceGroup": "[resourceGroup().name]"
+                            },
+                            {
+                                "connectionString": "[concat('Endpoint=sb://', variables('IoTHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('IoTHubsName'), ';SharedAccessKey=****;EntityPath=feed')]",
+                                "name": "sunshine-feed-eh",
+                                "subscriptionId": "[subscription().id]",
+                                "resourceGroup": "[resourceGroup().name]"
+                            }
+                        ],
+                        "storageContainers": []
+                    },
+                    "routes": [{
+                            "name": "live-list",
+                            "source": "DeviceMessages",
+                            "condition": "__messageType='liveList'",
+                            "endpointNames": [
+                                "sunshine-live-list-eh"
+                            ],
+                            "isEnabled": true
+                        },
+                        {
+                            "name": "live-data",
+                            "source": "DeviceMessages",
+                            "condition": "__messageType='liveData'",
+                            "endpointNames": [
+                                "sunshine-live-data-eh"
+                            ],
+                            "isEnabled": true
+                        },
+                        {
+                            "name": "feed",
+                            "source": "DeviceMessages",
+                            "condition": "__messageType='feed'",
+                            "endpointNames": [
+                                "sunshine-feed-eh"
+                            ],
+                            "isEnabled": true
+                        }
+                    ],
+                    "fallbackRoute": {
+                        "name": "$fallback",
+                        "source": "DeviceMessages",
+                        "condition": "true",
+                        "endpointNames": [
+                            "events"
+                        ],
+                        "isEnabled": true
+                    }
+                },
+                "storageEndpoints": {
+                    "$default": {
+                        "sasTtlAsIso8601": "PT1H",
+                        "connectionString": "",
+                        "containerName": ""
+                    }
+                },
+                "messagingEndpoints": {
+                    "fileNotifications": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "enableFileUploadNotifications": false,
+                "cloudToDevice": {
+                    "maxDeliveryCount": 10,
+                    "defaultTtlAsIso8601": "PT1H",
+                    "feedback": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "features": "None"
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces",
+            "apiVersion": "2017-04-01",
+            "name": "[variables('EventHubsName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "properties": {
+                "isAutoInflateEnabled": false,
+                "maximumThroughputUnits": 0
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/AzureFunctions')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Listen"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/RootManageSharedAccessKey')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Listen",
+                    "Manage",
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/feed')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {
+                "messageRetentionInDays": 1,
+                "partitionCount": 2,
+                "status": "Active"
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/live-data')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {
+                "messageRetentionInDays": 1,
+                "partitionCount": 2,
+                "status": "Active"
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/live-list')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {
+                "messageRetentionInDays": 1,
+                "partitionCount": 2,
+                "status": "Active"
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/feed/iothubroutes_sunshine')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'feed')]",
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/live-data/iothubroutes_sunshine')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'live-data')]",
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/live-list/iothubroutes_sunshine')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'live-list')]",
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {
+                "rights": [
+                    "Send"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/feed/$Default')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'feed')]",
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/live-data/$Default')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'live-data')]",
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/live-list/$Default')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'live-list')]",
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/live-data/panel')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'live-data')]",
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/live-data/raw')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'live-data')]",
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('EventHubsName'), '/live-data/summary')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'live-data')]",
+                "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
+            ],
+            "properties": {}
+        }
+    ],
+    "parameters": {
+        "name": {
+            "type": "string",
+            "metadata": {
+                "description": "Short name for the resources within this stack"
+            }
+        },
+        "location": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "functionAppName": "[concat(parameters('name'), '-functions')]",
+        "storageName": "[replace(concat(parameters('name'), 'storage'), '-', '')]",
+        "appInsightsName": "[concat(parameters('name'), '-app-insights')]",
+        "IoTHubsName": "[concat(parameters('name'), '-iot-hub')]",
+        "EventHubsName": "[concat(parameters('name'), '-event-hub')]"
+    },
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0"
+}
