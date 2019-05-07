@@ -11,6 +11,9 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  azureResourceNamePrefix: sunshine
+  azureSubscription: ''
+  azureResourceLocation: 'Australia East'
 
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
@@ -46,3 +49,13 @@ steps:
   displayName: Archive MockApi
 
 - task: PublishBuildArtifacts@1
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create ACR'
+  inputs:
+    azureSubscription: '$(azureSubscription)'
+    resourceGroupName: '$(azureResourceNamePrefix)-shared'
+    location: '$(azureResourceLocation)'
+    templateLocation: 'URL of the file'
+    csmFileLink: 'https://raw.githubusercontent.com/Azure-Samples/devops-iot-scripts/12d60bd513ead7c94aa1669e505083beaef8a480/arm-acr.json'
+    overrideParameters: '-name $(azureResourceNamePrefix) -registrySku "S1" -location "$(azureResourceLocation)"'
