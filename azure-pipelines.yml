@@ -12,7 +12,7 @@ pool:
 variables:
   buildConfiguration: 'Release'
   azureResourceNamePrefix: sunshine
-  azureSubscription: ''
+  azureSubscription: 'Azure RG - shared'
   azureResourceLocation: 'Australia East'
 
 steps:
@@ -57,5 +57,5 @@ steps:
     resourceGroupName: '$(azureResourceNamePrefix)-shared'
     location: '$(azureResourceLocation)'
     templateLocation: 'URL of the file'
-    csmFileLink: 'https://raw.githubusercontent.com/Azure-Samples/devops-iot-scripts/12d60bd513ead7c94aa1669e505083beaef8a480/arm-acr.json'
+    csmFileLink: '$(Build.SourcesDirectory)/.build/acr.json'
     overrideParameters: '-name $(azureResourceNamePrefix) -registrySku "S1" -location "$(azureResourceLocation)"'
