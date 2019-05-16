@@ -54,4 +54,4 @@ let trigger
         let! _ = Async.Parallel ops
 
         logger.LogInformation(sprintf "%s: Processed feed" correlationId)
-    }
+    } |> Async.StartAsTask
