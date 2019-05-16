@@ -38,10 +38,9 @@ let main _ =
                     | Some liveList ->
                         do! sendIoTMessage iotHubClient "liveList" correlationId liveList
                     | None ->
-                        printfn "Sleep loop failed"
+                        ignore()
 
-                    listPoller() |> Async.Start
-                }
+                    listPoller() |> Async.Start }
                 do! sendIoTMessage iotHubClient "liveList" correlationId liveList
                 listPoller() |> Async.Start
 
@@ -51,11 +50,10 @@ let main _ =
                         do! sendIoTMessage iotHubClient "liveData" correlationId liveData
 
                     | None ->
-                        printfn "Didn't find live data"
+                        ignore()
 
                     do! int(TimeSpan.FromSeconds(20.).TotalMilliseconds) |> Async.Sleep
-                    dataPoller() |> Async.Start
-                }
+                    dataPoller() |> Async.Start }
 
                 dataPoller() |> Async.Start
 
@@ -67,11 +65,10 @@ let main _ =
                 | Some feed ->
                     do! sendIoTMessage iotHubClient "feed" correlationId feed
                 | None ->
-                    printfn "Didn't find feed"
+                    ignore()
 
                 do! int(TimeSpan.FromMinutes(5.).TotalMilliseconds) |> Async.Sleep
-                feedPoller() |> Async.Start
-            }
+                feedPoller() |> Async.Start }
 
             feedPoller() |> Async.Start
 
@@ -82,5 +79,4 @@ let main _ =
             else
                 Console.ReadLine() |> ignore
 
-            return 0
-    } |> Async.RunSynchronously
+            return 0 } |> Async.RunSynchronously

@@ -23,5 +23,8 @@ let getPgridFeed getData date (deviceId : string) =
                   |> Array.map (fun (_, v) -> PgridFeed.DeviceId v)
                   |> Array.tryExactlyOne
         with
-        | _ -> return None
+        | ex ->
+            printfn "Failure getting feed"
+            printfn "%A" <| ex
+            return None
     }

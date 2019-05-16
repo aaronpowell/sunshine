@@ -17,5 +17,4 @@ let getSpec getData =
             do! Async.Sleep 30000
 
             let! data = getData urlPath
-            return Spec.Parse data
-    }
+            return Spec.Parse data }

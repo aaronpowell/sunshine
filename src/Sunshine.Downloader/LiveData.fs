@@ -9,6 +9,7 @@ let listUrlPath = liveUrlPath + "/list"
 
 let getLiveList getData deviceId =
     async {
+      try
         let! data = getData listUrlPath
 
         let parsedData = (LiveList.Parse data)
@@ -16,16 +17,25 @@ let getLiveList getData deviceId =
         return parsedData.Devices
                |> Array.filter (fun d -> d.DeviceId |> toS = deviceId)
                |> Array.tryExactlyOne
-    }
+      with
+      | ex ->
+        printfn "Failure getting live list" 
+        printfn "%A" <| ex
+        return None }
 
 let getLiveData getData (deviceId : string) =
     async {
-        let! data = getData liveUrlPath
+        try
+          let! data = getData liveUrlPath
 
-        let liveData = LiveData.Parse data
+          let liveData = LiveData.Parse data
 
-        return liveData.JsonValue.Properties()
-               |> Array.filter (fun (p, _) -> p = deviceId.Replace("\"", ""))
-               |> Array.map (fun (_, v) -> LiveData.DeviceId v)
-               |> Array.tryExactlyOne
-    }
+          return liveData.JsonValue.Properties()
+                 |> Array.filter (fun (p, _) -> p = deviceId.Replace("\"", ""))
+                 |> Array.map (fun (_, v) -> LiveData.DeviceId v)
+                 |> Array.tryExactlyOne
+        with
+        | ex ->
+          printfn "Failure getting live data"
+          printfn "%A" <| ex
+          return None }
