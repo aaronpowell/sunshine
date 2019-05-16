@@ -46,13 +46,10 @@ let trigger
                      Watts = findPoint' (sprintf "Pin%s" p)
                      MessageTimestamp = timestamp
                      CorrelationId = correlationId }
-               panel
+               panel |> Insert |> inTableToClientAsync panelDataTable
 
-        let panel1 = storePanel "1"
-        let panel2 = storePanel "2"
-
-        let! _ = panel1 |> Insert |> inTableToClientAsync panelDataTable
-        let! _ = panel2 |> Insert |> inTableToClientAsync panelDataTable
+        let! _ = storePanel "1"
+        let! _ = storePanel "2"
 
         logger.LogInformation(sprintf "%s: Stored panel %s for device %s" correlationId messageId deviceId)
     } |> Async.StartAsTask
