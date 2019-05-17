@@ -14,7 +14,7 @@
       "request": "attach",
       "processId": "${command:pickRemoteProcess}",
       "pipeTransport": {
-          "pipeProgram": "docker",
+          "pipeProgram": "docker.exe",
           "pipeArgs": [ "exec", "-i", "sunshine-downloader" ],
           "debuggerPath": "/vsdbg/vsdbg",
           "pipeCwd": "${workspaceRoot}",
@@ -40,7 +40,7 @@
       "request": "attach",
       "processId": "${command:pickRemoteProcess}",
       "pipeTransport": {
-          "pipeProgram": "docker",
+          "pipeProgram": "docker.exe",
           "pipeArgs": [ "exec", "-i", "sunshine-functions" ],
           "debuggerPath": "/vsdbg/vsdbg",
           "pipeCwd": "${workspaceRoot}",
