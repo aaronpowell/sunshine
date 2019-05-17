@@ -58,4 +58,4 @@ steps:
     location: '$(azureResourceLocation)'
     templateLocation: Linked artifact
     csmFile: '$(Build.SourcesDirectory)/.build/acr.json'
-    overrideParameters: '-name $(azureResourceNamePrefix) -registrySku "S1" -location "$(azureResourceLocation)"'
+    overrideParameters: '-name $(azureResourceNamePrefix) -registrySku "Standard" -location "$(azureResourceLocation)"'
