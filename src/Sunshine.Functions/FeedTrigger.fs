@@ -31,6 +31,7 @@ let trigger
     async {
         let message = Encoding.UTF8.GetString eventData.Body.Array
         let feed = PgridFeedDevice.Parse message
+        printfn "Feed: %A" <| feed
         let correlationId = string eventData.Properties.["correlationId"]
         let messageId = string eventData.Properties.["messageId"]
 
@@ -46,7 +47,7 @@ let trigger
                   |> Array.map((fun d -> { CorrelationId = correlationId
                                            Id = string d.Timestamp
                                            Value = d.Value
-                                           Timestamp = DateTime.Parse(string d.Timestamp)}) >> InsertOrMerge)
+                                           Timestamp = DateTime.Parse(d.Timestamp.ToString().Replace("\"", ""))}) >> InsertOrMerge)
                   |> Array.toSeq
                   |> autobatch
                   |> Seq.map tableBatch
