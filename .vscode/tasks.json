@@ -52,7 +52,7 @@
       "label": "docker build (downloader)",
       "type": "shell",
       "isBackground": true,
-      "command": "docker build -t sunshine-downloader .",
+      "command": "docker.exe build -t sunshine-downloader .",
       "options": {
         "cwd": "${workspaceFolder}/src/Sunshine.Downloader"
       }
@@ -60,7 +60,7 @@
     {
       "label": "docker run (downloader)",
       "type": "shell",
-      "command": "docker run --rm -it --name sunshine-downloader --env-file=.env sunshine-downloader",
+      "command": "docker.exe run --rm -it --name sunshine-downloader --env-file=.env sunshine-downloader",
       "dependsOn": "docker build (downloader)",
       "options": {
         "cwd": "${workspaceFolder}/src/Sunshine.Downloader"
@@ -71,7 +71,7 @@
       "label": "docker build (mock api)",
       "type": "shell",
       "isBackground": true,
-      "command": "docker build -t sunshine-mockapi .",
+      "command": "docker.exe build -t sunshine-mockapi .",
       "options": {
         "cwd": "${workspaceFolder}/src/Sunshine.MockApi"
       }
@@ -79,7 +79,7 @@
     {
       "label": "docker run (mock api)",
       "type": "shell",
-      "command": "docker run --rm --name sunshine-mockapi -p 8080:80 sunshine-mockapi",
+      "command": "docker.exe run --rm --name sunshine-mockapi -p 8080:80 sunshine-mockapi",
       "dependsOn": "docker build (mock api)",
       "options": {
         "cwd": "${workspaceFolder}/src/Sunshine.MockApi"
@@ -90,7 +90,7 @@
       "label": "docker build (functions)",
       "type": "shell",
       "isBackground": true,
-      "command": "docker build -t sunshine-functions .",
+      "command": "docker.exe build -t sunshine-functions .",
       "options": {
         "cwd": "${workspaceFolder}/src/Sunshine.Functions"
       },
@@ -99,7 +99,7 @@
     {
       "label": "docker run (functions)",
       "type": "shell",
-      "command": "docker run --rm --name sunshine-functions -p 8081:80 --env-file=.env sunshine-functions",
+      "command": "docker.exe run --rm --name sunshine-functions -p 8081:80 --env-file=.env sunshine-functions",
       "dependsOn": "docker build (functions)",
       "options": {
         "cwd": "${workspaceFolder}/src/Sunshine.Functions"
