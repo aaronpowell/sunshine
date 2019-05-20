@@ -37,23 +37,13 @@
             }
           },
           "modules": {
-            "temp-sensor-module": {
+            "SunshineDownloader": {
               "version": "1.0",
               "type": "docker",
               "status": "running",
               "restartPolicy": "always",
               "settings": {
-                "image": "mcr.microsoft.com/azureiotedge-simulated-temperature-sensor:1.0",
-                "createOptions": ""
-              }
-            },
-            "SampleModule": {
-              "version": "1.0",
-              "type": "docker",
-              "status": "running",
-              "restartPolicy": "always",
-              "settings": {
-                "image": "${MODULES.SampleModule}",
+                "image": "${MODULES.SunshineDownloader}",
                 "createOptions": ""
               }
             }
@@ -64,8 +54,6 @@
         "properties.desired": {
           "schemaVersion": "1.0",
           "routes": {
-            "sensorToFilter1": "FROM /messages/modules/temp-sensor-module/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/SampleModule/inputs/input1\")",
-            "filter2": "FROM /messages/modules/SampleModule/outputs/output1 INTO $upstream"
           },
           "storeAndForwardConfiguration": {
             "timeToLiveSecs": 7200

@@ -1,0 +1,9 @@
+FROM mcr.microsoft.com/dotnet/core/runtime:2.2.5-stretch-slim
+
+WORKDIR /app
+COPY ./Sunshine.Downloader/app ./
+
+RUN useradd -ms /bin/bash moduleuser
+USER moduleuser
+
+ENTRYPOINT ["dotnet", "Sunshine.Downloader.dll"]
