@@ -14,7 +14,7 @@ variables:
   azureResourceNamePrefix: sunshine
   azureSubscription: 'Azure RG - shared'
   azureResourceLocation: 'Australia East'
-  MODULES_PATH: '$(Build.SourcesDirectory)/.build/modules'
+  # MODULES_PATH: '$(Build.SourcesDirectory)/.build/modules'
 
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
