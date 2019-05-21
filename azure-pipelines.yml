@@ -69,11 +69,10 @@ steps:
     arguments: -ResourceManagerOutput '$(ResourceGroupDeploymentOutputs)'
 
 - task: AzureIoTEdge@2
-  displayName: 'Azure IoT Edge - Build module images'
+  displayName: 'Azure IoT Edge - Build module images (amd64)'
   inputs:
     templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
     defaultPlatform: amd64
-
 - task: AzureIoTEdge@2
   displayName: 'Azure IoT Edge - Push module images'
   inputs:
@@ -81,6 +80,35 @@ steps:
     templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
     azureSubscriptionEndpoint: '$(azureSubscription)'
     azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
+    defaultPlatform: amd64
+
+- task: AzureIoTEdge@2
+  displayName: 'Azure IoT Edge - Build module images (arm32v7)'
+  inputs:
+    templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+    defaultPlatform: arm32v7
+- task: AzureIoTEdge@2
+  displayName: 'Azure IoT Edge - Push module images'
+  inputs:
+    action: 'Push module images'
+    templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+    azureSubscriptionEndpoint: '$(azureSubscription)'
+    azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
+    defaultPlatform: arm32v7
+
+- task: AzureIoTEdge@2
+  displayName: 'Azure IoT Edge - Build module images (amd64.debug)'
+  inputs:
+    templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+    defaultPlatform: amd64.debug
+- task: AzureIoTEdge@2
+  displayName: 'Azure IoT Edge - Push module images'
+  inputs:
+    action: 'Push module images'
+    templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+    azureSubscriptionEndpoint: '$(azureSubscription)'
+    azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
+    defaultPlatform: amd64.debug
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: IoT Edge Deployment'
