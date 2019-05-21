@@ -69,7 +69,7 @@ steps:
       Write-Host $env:ResourceGroupDeploymentOutputs
       $outputs = ConvertFrom-Json $($env:ResourceGroupDeploymentOutputs)
       Write-Host $outputs
-      Write-Host "##vso[task.setvariable variable=DEVOPS_IOTEDGE_REGISTRY_URL]$($outputs.PSObject.Properties['acrUrl'])"
+      # Write-Host "##vso[task.setvariable variable=DEVOPS_IOTEDGE_REGISTRY_URL]$($outputs.PSObject.Properties['acrUrl'])"
 
 - task: CopyFiles@2
   displayName: 'Prepare files for IoT Edge build'
