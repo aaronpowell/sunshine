@@ -60,6 +60,14 @@ steps:
     csmFile: '$(Build.SourcesDirectory)/.build/acr.json'
     overrideParameters: '-name $(azureResourceNamePrefix) -registrySku "Basic" -location "$(azureResourceLocation)"'
 
+- task: PowerShell@2
+  displayName: Convert ARM output to environment variables
+  inputs:
+    targetType: inline
+    script:
+      $outputs = ConvertFrom-Json $($env:ResourceGroupDeploymentOutputs)
+      Write-Host "##vso[task.setvariable variable=DEVOPS_IOTEDGE_REGISTRY_URL]$($outputs.PSObject.Properties['acrUrl'])"
+
 - task: CopyFiles@2
   displayName: 'Prepare files for IoT Edge build'
   inputs:

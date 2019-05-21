@@ -34,6 +34,12 @@
     "variables": {
         "registryName": "[concat(parameters('name'), 'cr')]"
     },
+    "outputs": {
+        "acrUrl": {
+            "type": "string",
+            "value": "[concat(variables('registryName'), '.azurecr.io')]"
+        }
+    },
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0"
 }
