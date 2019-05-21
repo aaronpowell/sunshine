@@ -70,15 +70,23 @@ jobs:
 
     - task: PowerShell@2
       displayName: Convert ARM output to environment variables
+      name: armVar
       inputs:
         targetType: filePath
         filePath: '$(Build.SourcesDirectory)/.build/Set-ResourceManagerOutput.ps1'
         arguments: -ResourceManagerOutput '$(ResourceGroupDeploymentOutputs)'
 
-  - job: BuildImages
-    displayName: Build Images for IoT Edge
+  - job: BuildImages_amd64
+    displayName: Build Images for IoT Edge (amd64)
+    dependsOn:
+      - PrepareAzure
+      - Build
     pool:
       vmImage: 'Ubuntu-16.04'
+    variables:
+      CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
+      SUBSCRIPTION_ID: $[dependencies.PrepareAzure.outputs['armVar.SUBSCRIPTION_ID']]
+      CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
     steps:
     - task: AzureIoTEdge@2
       displayName: 'Azure IoT Edge - Build module images (amd64)'
@@ -94,6 +102,18 @@ jobs:
         azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
         defaultPlatform: amd64
 
+  - job: BuildImages_arm32v7
+    displayName: Build Images for IoT Edge (arm32v7)
+    dependsOn:
+      - PrepareAzure
+      - Build
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    variables:
+      CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
+      SUBSCRIPTION_ID: $[dependencies.PrepareAzure.outputs['armVar.SUBSCRIPTION_ID']]
+      CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
+    steps:
     - task: AzureIoTEdge@2
       displayName: 'Azure IoT Edge - Build module images (arm32v7)'
       inputs:
@@ -108,6 +128,18 @@ jobs:
         azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
         defaultPlatform: arm32v7
 
+  - job: BuildImages_amd64_debug
+    displayName: Build Images for IoT Edge (amd64.debug)
+    dependsOn:
+      - PrepareAzure
+      - Build
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    variables:
+      CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
+      SUBSCRIPTION_ID: $[dependencies.PrepareAzure.outputs['armVar.SUBSCRIPTION_ID']]
+      CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
+    steps:
     - task: AzureIoTEdge@2
       displayName: 'Azure IoT Edge - Build module images (amd64.debug)'
       inputs:
@@ -124,6 +156,10 @@ jobs:
 
   - job: PublishArtifacts
     displayName: Publish Artifacts
+    dependsOn:
+        - BuildImages_amd64
+        - BuildImages_amd64_debug
+        - BuildImages_arm32v7
     steps:
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifact: IoT Edge Deployment'
