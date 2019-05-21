@@ -68,12 +68,6 @@ steps:
     filePath: '$(Build.SourcesDirectory)/.build/Set-ResourceManagerOutput.ps1'
     arguments: -ResourceManagerOutput '$(ResourceGroupDeploymentOutputs)'
 
-- task: CopyFiles@2
-  displayName: 'Prepare files for IoT Edge build'
-  inputs:
-    sourceFolder: '$(Build.SourcesDirectory)/src/Sunshine.Downloader/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
-    targetFolder: '$(Build.SourcesDirectory)/.build/Sunshine.Downloader/app'
-
 - task: AzureIoTEdge@2
   displayName: 'Azure IoT Edge - Build module images'
   inputs:
