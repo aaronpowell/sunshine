@@ -78,6 +78,7 @@ steps:
   displayName: 'Azure IoT Edge - Push module images'
   inputs:
     action: 'Push module images'
+    templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
     azureSubscriptionEndpoint: '$(azureSubscription)'
     azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
 
