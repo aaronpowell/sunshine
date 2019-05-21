@@ -38,6 +38,14 @@
         "acrUrl": {
             "type": "string",
             "value": "[concat(variables('registryName'), '.azurecr.io')]"
+        },
+        "acrName": {
+            "type": "string",
+            "value": "[variables('registryName')]"
+        },
+        "subscriptionId": {
+            "type": "string",
+            "value": "[subscription().id]"
         }
     },
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",

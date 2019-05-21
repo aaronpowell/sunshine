@@ -64,12 +64,9 @@ steps:
 - task: PowerShell@2
   displayName: Convert ARM output to environment variables
   inputs:
-    targetType: inline
-    script:
-      Write-Host $env:ResourceGroupDeploymentOutputs
-      $outputs = ConvertFrom-Json $($env:ResourceGroupDeploymentOutputs)
-      Write-Host $outputs
-      # Write-Host "##vso[task.setvariable variable=DEVOPS_IOTEDGE_REGISTRY_URL]$($outputs.PSObject.Properties['acrUrl'])"
+    targetType: filePath
+    script: '$(Build.SourcesDirectory)/.build/Set-ResourceManagerOutput.ps1'
+    arguments: -ResourceManagerOutput '$(ResourceGroupDeploymentOutputs)'
 
 - task: CopyFiles@2
   displayName: 'Prepare files for IoT Edge build'
@@ -82,6 +79,13 @@ steps:
   inputs:
     templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
     defaultPlatform: amd64
+
+- task: AzureIoTEdge@2
+  displayName: 'Azure IoT Edge - Push module images'
+  inputs:
+    action: 'Push module images'
+    azureSubscriptionEndpoint: '$(azureSubscription)'
+    azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "/subscriptions/$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: IoT Edge Deployment'

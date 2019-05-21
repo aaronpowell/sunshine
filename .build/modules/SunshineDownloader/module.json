@@ -2,7 +2,7 @@
     "$schema-version": "0.0.1",
     "description": "",
     "image": {
-        "repository": "${DEVOPS_IOTEDGE_REGISTRY_URL}/sunshine-downloader",
+        "repository": "${CONTAINER_REGISTRY_SERVER}/sunshine-downloader",
         "tag": {
             "version": "${BUILD_BUILDID}",
             "platforms": {
