@@ -1,114 +1,128 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'Ubuntu-16.04'
+jobs:
+  - job: Build
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    variables:
+      buildConfiguration: 'Release'
+    steps:
+    - script: dotnet build --configuration $(buildConfiguration)
+      displayName: 'dotnet build $(buildConfiguration)'
 
-variables:
-  buildConfiguration: 'Release'
-  azureResourceNamePrefix: sunshine
-  azureSubscription: 'Azure RG - shared'
-  azureResourceLocation: 'Australia East'
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'publish'
+        arguments: '--configuration $(BuildConfiguration)'
+        publishWebProjects: false
+        zipAfterPublish: false
+      displayName: dotnet publish
 
-steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(Build.SourcesDirectory)/src/Sunshine.Downloader/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
+        includeRootFolder: false
+        archiveFile: '$(Build.ArtifactStagingDirectory)/Sunshine.Downloader-$(Build.BuildId).zip'
+      displayName: Archive Downloader
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    arguments: '--configuration $(BuildConfiguration)'
-    publishWebProjects: false
-    zipAfterPublish: false
-  displayName: dotnet publish
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(Build.SourcesDirectory)/src/Sunshine.Functions/bin/$(BuildConfiguration)/netcoreapp2.1/publish'
+        includeRootFolder: false
+        archiveFile: '$(Build.ArtifactStagingDirectory)/Sunshine.Functions-$(Build.BuildId).zip'
+      displayName: Archive Functions
 
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)/src/Sunshine.Downloader/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
-    includeRootFolder: false
-    archiveFile: '$(Build.ArtifactStagingDirectory)/Sunshine.Downloader-$(Build.BuildId).zip'
-  displayName: Archive Downloader
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(Build.SourcesDirectory)/src/Sunshine.MockApi/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
+        includeRootFolder: false
+        archiveFile: '$(Build.ArtifactStagingDirectory)/Sunshine.MockApi-$(Build.BuildId).zip'
+      displayName: Archive MockApi
 
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)/src/Sunshine.Functions/bin/$(BuildConfiguration)/netcoreapp2.1/publish'
-    includeRootFolder: false
-    archiveFile: '$(Build.ArtifactStagingDirectory)/Sunshine.Functions-$(Build.BuildId).zip'
-  displayName: Archive Functions
+  - job: PrepareAzure
+    displayName: Prepare Azure
+    variables:
+      azureResourceNamePrefix: sunshine
+      azureSubscription: 'Azure RG - shared'
+      azureResourceLocation: 'Australia East'
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: CopyFiles@2
+      displayName: Copy Resource Manager Template for Release
+      inputs:
+        contents: '$(Build.SourcesDirectory)/.build/azure-environment.json'
+        targetFolder: $(Build.ArtifactStagingDirectory)
 
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)/src/Sunshine.MockApi/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
-    includeRootFolder: false
-    archiveFile: '$(Build.ArtifactStagingDirectory)/Sunshine.MockApi-$(Build.BuildId).zip'
-  displayName: Archive MockApi
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Azure Deployment:Create ACR'
+      inputs:
+        azureSubscription: '$(azureSubscription)'
+        resourceGroupName: '$(azureResourceNamePrefix)-shared'
+        location: '$(azureResourceLocation)'
+        templateLocation: Linked artifact
+        csmFile: '$(Build.SourcesDirectory)/.build/acr.json'
+        overrideParameters: '-name $(azureResourceNamePrefix) -registrySku "Basic" -location "$(azureResourceLocation)"'
+        deploymentOutputs: ResourceGroupDeploymentOutputs
 
-- task: CopyFiles@2
-  displayName: Copy Resource Manager Template for Release
-  inputs:
-    contents: '$(Build.SourcesDirectory)/.build/azure-environment.json'
-    targetFolder: $(Build.ArtifactStagingDirectory)
+    - task: PowerShell@2
+      displayName: Convert ARM output to environment variables
+      inputs:
+        targetType: filePath
+        filePath: '$(Build.SourcesDirectory)/.build/Set-ResourceManagerOutput.ps1'
+        arguments: -ResourceManagerOutput '$(ResourceGroupDeploymentOutputs)'
 
-- task: AzureResourceGroupDeployment@2
-  displayName: 'Azure Deployment:Create ACR'
-  inputs:
-    azureSubscription: '$(azureSubscription)'
-    resourceGroupName: '$(azureResourceNamePrefix)-shared'
-    location: '$(azureResourceLocation)'
-    templateLocation: Linked artifact
-    csmFile: '$(Build.SourcesDirectory)/.build/acr.json'
-    overrideParameters: '-name $(azureResourceNamePrefix) -registrySku "Basic" -location "$(azureResourceLocation)"'
-    deploymentOutputs: ResourceGroupDeploymentOutputs
+  - job: BuildImages
+    displayName: Build Images for IoT Edge
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: AzureIoTEdge@2
+      displayName: 'Azure IoT Edge - Build module images (amd64)'
+      inputs:
+        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+        defaultPlatform: amd64
+    - task: AzureIoTEdge@2
+      displayName: 'Azure IoT Edge - Push module images (amd64)'
+      inputs:
+        action: 'Push module images'
+        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+        azureSubscriptionEndpoint: '$(azureSubscription)'
+        azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
+        defaultPlatform: amd64
 
-- task: PowerShell@2
-  displayName: Convert ARM output to environment variables
-  inputs:
-    targetType: filePath
-    filePath: '$(Build.SourcesDirectory)/.build/Set-ResourceManagerOutput.ps1'
-    arguments: -ResourceManagerOutput '$(ResourceGroupDeploymentOutputs)'
+    - task: AzureIoTEdge@2
+      displayName: 'Azure IoT Edge - Build module images (arm32v7)'
+      inputs:
+        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+        defaultPlatform: arm32v7
+    - task: AzureIoTEdge@2
+      displayName: 'Azure IoT Edge - Push module images (arm32v7)'
+      inputs:
+        action: 'Push module images'
+        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+        azureSubscriptionEndpoint: '$(azureSubscription)'
+        azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
+        defaultPlatform: arm32v7
 
-- task: AzureIoTEdge@2
-  displayName: 'Azure IoT Edge - Build module images (amd64)'
-  inputs:
-    templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-    defaultPlatform: amd64
-- task: AzureIoTEdge@2
-  displayName: 'Azure IoT Edge - Push module images (amd64)'
-  inputs:
-    action: 'Push module images'
-    templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-    azureSubscriptionEndpoint: '$(azureSubscription)'
-    azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
-    defaultPlatform: amd64
+    - task: AzureIoTEdge@2
+      displayName: 'Azure IoT Edge - Build module images (amd64.debug)'
+      inputs:
+        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+        defaultPlatform: amd64.debug
+    - task: AzureIoTEdge@2
+      displayName: 'Azure IoT Edge - Push module images (amd64.debug)'
+      inputs:
+        action: 'Push module images'
+        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+        azureSubscriptionEndpoint: '$(azureSubscription)'
+        azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
+        defaultPlatform: amd64.debug
 
-- task: AzureIoTEdge@2
-  displayName: 'Azure IoT Edge - Build module images (arm32v7)'
-  inputs:
-    templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-    defaultPlatform: arm32v7
-- task: AzureIoTEdge@2
-  displayName: 'Azure IoT Edge - Push module images (arm32v7)'
-  inputs:
-    action: 'Push module images'
-    templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-    azureSubscriptionEndpoint: '$(azureSubscription)'
-    azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
-    defaultPlatform: arm32v7
-
-- task: AzureIoTEdge@2
-  displayName: 'Azure IoT Edge - Build module images (amd64.debug)'
-  inputs:
-    templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-    defaultPlatform: amd64.debug
-- task: AzureIoTEdge@2
-  displayName: 'Azure IoT Edge - Push module images (amd64.debug)'
-  inputs:
-    action: 'Push module images'
-    templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-    azureSubscriptionEndpoint: '$(azureSubscription)'
-    azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
-    defaultPlatform: amd64.debug
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: IoT Edge Deployment'
-  continueOnError: true
+  - job: PublishArtifacts
+    displayName: Publish Artifacts
+    steps:
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact: IoT Edge Deployment'
+        continueOnError: true
