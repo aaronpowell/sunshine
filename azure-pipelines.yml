@@ -74,7 +74,7 @@ steps:
     templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
     defaultPlatform: amd64
 - task: AzureIoTEdge@2
-  displayName: 'Azure IoT Edge - Push module images'
+  displayName: 'Azure IoT Edge - Push module images (amd64)'
   inputs:
     action: 'Push module images'
     templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
@@ -88,7 +88,7 @@ steps:
     templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
     defaultPlatform: arm32v7
 - task: AzureIoTEdge@2
-  displayName: 'Azure IoT Edge - Push module images'
+  displayName: 'Azure IoT Edge - Push module images (arm32v7)'
   inputs:
     action: 'Push module images'
     templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
@@ -102,7 +102,7 @@ steps:
     templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
     defaultPlatform: amd64.debug
 - task: AzureIoTEdge@2
-  displayName: 'Azure IoT Edge - Push module images'
+  displayName: 'Azure IoT Edge - Push module images (amd64.debug)'
   inputs:
     action: 'Push module images'
     templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
@@ -113,6 +113,6 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: IoT Edge Deployment'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/deployment.amd64.json'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/deployment.*.json'
     ArtifactName: Drop
 
