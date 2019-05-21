@@ -63,7 +63,7 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.SunshineDownloader}",
+              "image": "${MODULES.Sunshine.Downloader}",
               "createOptions": {
                 "Env": [
                   "SUNSHINE_URL=${SunshineUrl}",
