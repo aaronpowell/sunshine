@@ -1,6 +1,10 @@
 trigger:
 - master
 
+variables:
+  azureSubscription: 'Azure RG - shared'
+  azureResourceNamePrefix: sunshine
+
 jobs:
   - job: Build
     pool:
@@ -43,8 +47,6 @@ jobs:
   - job: PrepareAzure
     displayName: Prepare Azure
     variables:
-      azureResourceNamePrefix: sunshine
-      azureSubscription: 'Azure RG - shared'
       azureResourceLocation: 'Australia East'
     pool:
       vmImage: 'Ubuntu-16.04'
