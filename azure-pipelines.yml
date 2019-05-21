@@ -48,8 +48,6 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/Sunshine.MockApi-$(Build.BuildId).zip'
   displayName: Archive MockApi
 
-- task: PublishBuildArtifacts@1
-
 - task: AzureResourceGroupDeployment@2
   displayName: 'Azure Deployment:Create ACR'
   inputs:
@@ -113,6 +111,6 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: IoT Edge Deployment'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/deployment.*.json'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: Drop
-
+  continueOnError: true
