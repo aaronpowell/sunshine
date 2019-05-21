@@ -43,6 +43,12 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/Sunshine.MockApi-$(Build.BuildId).zip'
   displayName: Archive MockApi
 
+- task: CopyFiles@2
+  displayName: Copy Resource Manager Template for Release
+  inputs:
+    contents: '$(Build.SourcesDirectory)/.build/azure-environment.json'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+
 - task: AzureResourceGroupDeployment@2
   displayName: 'Azure Deployment:Create ACR'
   inputs:
