@@ -66,6 +66,7 @@ steps:
   inputs:
     targetType: inline
     script:
+      echo $env:ResourceGroupDeploymentOutputs
       $outputs = ConvertFrom-Json $($env:ResourceGroupDeploymentOutputs)
       Write-Host "##vso[task.setvariable variable=DEVOPS_IOTEDGE_REGISTRY_URL]$($outputs.PSObject.Properties['acrUrl'])"
 
