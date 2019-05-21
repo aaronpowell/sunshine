@@ -85,7 +85,7 @@ steps:
   inputs:
     action: 'Push module images'
     azureSubscriptionEndpoint: '$(azureSubscription)'
-    azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "/subscriptions/$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
+    azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: IoT Edge Deployment'
