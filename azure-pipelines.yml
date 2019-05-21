@@ -59,6 +59,7 @@ steps:
     templateLocation: Linked artifact
     csmFile: '$(Build.SourcesDirectory)/.build/acr.json'
     overrideParameters: '-name $(azureResourceNamePrefix) -registrySku "Basic" -location "$(azureResourceLocation)"'
+    deploymentOutputs: ResourceGroupDeploymentOutputs
 
 - task: PowerShell@2
   displayName: Convert ARM output to environment variables
