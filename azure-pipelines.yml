@@ -102,6 +102,7 @@ jobs:
       displayName: Unpack Build Artifact
       inputs:
         destinationFolder: '$(Build.SourcesDirectory)/src/Sunshine.Downloader/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
+        archiveFilePatterns: Sunshine.Downloader-$(Build.BuildId).zip
     - task: AzureIoTEdge@2
       displayName: 'Azure IoT Edge - Build module images (amd64)'
       inputs:
@@ -140,6 +141,7 @@ jobs:
       displayName: Unpack Build Artifact
       inputs:
         destinationFolder: '$(Build.SourcesDirectory)/src/Sunshine.Downloader/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
+        archiveFilePatterns: Sunshine.Downloader-$(Build.BuildId).zip
     - task: AzureIoTEdge@2
       displayName: 'Azure IoT Edge - Build module images (arm32v7)'
       inputs:
@@ -178,6 +180,7 @@ jobs:
       displayName: Unpack Build Artifact
       inputs:
         destinationFolder: '$(Build.SourcesDirectory)/src/Sunshine.Downloader/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
+        archiveFilePatterns: Sunshine.Downloader-$(Build.BuildId).zip
     - task: AzureIoTEdge@2
       displayName: 'Azure IoT Edge - Build module images (amd64.debug)'
       inputs:
