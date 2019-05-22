@@ -115,20 +115,20 @@
                         "serviceBusTopics": [],
                         "eventHubs": [{
                                 "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryKey,';EntityPath=live-data')]",
-                                "name": "live-data",
-                                "subscriptionId": "[subscription().id]",
+                                "name": "sunshine-live-data-eh",
+                                "subscriptionId": "[subscription().subscriptionId]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
                                 "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryKey,';EntityPath=live-list')]",
-                                "name": "live-list",
-                                "subscriptionId": "[subscription().id]",
+                                "name": "sunshine-live-list-eh",
+                                "subscriptionId": "[subscription().subscriptionId]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
                                 "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryKey,';EntityPath=feed')]",
-                                "name": "feed",
-                                "subscriptionId": "[subscription().id]",
+                                "name": "sunshine-feed-eh",
+                                "subscriptionId": "[subscription().subscriptionId]",
                                 "resourceGroup": "[resourceGroup().name]"
                             }
                         ],
@@ -139,7 +139,7 @@
                             "source": "DeviceMessages",
                             "condition": "__messageType='liveList'",
                             "endpointNames": [
-                                "live-list"
+                                "sunshine-live-list-eh"
                             ],
                             "isEnabled": true
                         },
@@ -148,7 +148,7 @@
                             "source": "DeviceMessages",
                             "condition": "__messageType='liveData'",
                             "endpointNames": [
-                                "live-data"
+                                "sunshine-live-data-eh"
                             ],
                             "isEnabled": true
                         },
@@ -157,7 +157,7 @@
                             "source": "DeviceMessages",
                             "condition": "__messageType='feed'",
                             "endpointNames": [
-                                "feed"
+                                "sunshine-feed-eh"
                             ],
                             "isEnabled": true
                         }
