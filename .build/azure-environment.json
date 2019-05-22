@@ -289,7 +289,7 @@
         {
             "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
             "apiVersion": "2017-04-01",
-            "name": "[concat(variables('EventHubsName'), '/feed', variables('IoTHubsName'))]",
+            "name": "[concat(variables('EventHubsName'), '/feed/', variables('IoTHubsName'))]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'feed')]",
@@ -304,7 +304,7 @@
         {
             "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
             "apiVersion": "2017-04-01",
-            "name": "[concat(variables('EventHubsName'), '/live-data', variables('IoTHubsName'))]",
+            "name": "[concat(variables('EventHubsName'), '/live-data/', variables('IoTHubsName'))]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'live-data')]",
@@ -319,7 +319,7 @@
         {
             "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
             "apiVersion": "2017-04-01",
-            "name": "[concat(variables('EventHubsName'), '/live-list', variables('IoTHubsName'))]",
+            "name": "[concat(variables('EventHubsName'), '/live-list/', variables('IoTHubsName'))]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'live-list')]",
