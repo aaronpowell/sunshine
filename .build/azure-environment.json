@@ -10,15 +10,15 @@
                         },
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('functionStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')), '2017-04-01').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('functionStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')), '2015-06-15').key1)]"
                         },
                         {
                             "name": "DataStorageConnectionString",
-                            "value": "[concat('Endpoint=sb://', variables('EventHubsName'), '.servicebus.windows.net/;SharedAccessKeyName=AzureFunctions;SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName')), '2017-04-01').key1)]"
+                            "value": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryConnectionString]"
                         },
                         {
                             "name": "IoTHubConnectionString",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('dataStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('dataStorageName')), '2017-04-01').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('dataStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('dataStorageName')), '2015-06-15').key1)]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -26,7 +26,7 @@
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('functionStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')), '2017-04-01').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('functionStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')), '2015-06-15').key1)]"
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
