@@ -14,11 +14,11 @@
                         },
                         {
                             "name": "DataStorageConnectionString",
-                            "value": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryConnectionString]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('dataStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('dataStorageName')), '2015-06-15').key1)]"
                         },
                         {
                             "name": "IoTHubConnectionString",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('dataStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('dataStorageName')), '2015-06-15').key1)]"
+                            "value": "[listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryConnectionString]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -114,19 +114,19 @@
                         "serviceBusQueues": [],
                         "serviceBusTopics": [],
                         "eventHubs": [{
-                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').key1,';EntityPath=live-data')]",
+                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryKey,';EntityPath=live-data')]",
                                 "name": "sunshine-live-data-eh",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
-                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').key1,';EntityPath=live-list')]",
+                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryKey,';EntityPath=live-list')]",
                                 "name": "sunshine-live-list-eh",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
-                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').key1,';EntityPath=feed')]",
+                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryKey,';EntityPath=feed')]",
                                 "name": "sunshine-feed-eh",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
