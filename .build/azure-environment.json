@@ -51,12 +51,12 @@
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('dataStorageName'))]",
                 "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
             ],
-            "apiVersion": "2016-03-01",
+            "apiVersion": "2016-08-01",
             "location": "[parameters('location')]",
             "kind": "functionapp"
         },
         {
-            "apiVersion": "2017-04-01",
+            "apiVersion": "2015-06-15",
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('functionStorageName')]",
             "location": "[parameters('location')]",
@@ -65,7 +65,7 @@
             }
         },
         {
-            "apiVersion": "2017-04-01",
+            "apiVersion": "2015-06-15",
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('dataStorageName')]",
             "location": "[parameters('location')]",
@@ -114,19 +114,19 @@
                         "serviceBusQueues": [],
                         "serviceBusTopics": [],
                         "eventHubs": [{
-                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName')), '2017-04-01').key1,';EntityPath=live-data')]",
+                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').key1,';EntityPath=live-data')]",
                                 "name": "sunshine-live-data-eh",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
-                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName')), '2017-04-01').key1,';EntityPath=live-list')]",
+                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').key1,';EntityPath=live-list')]",
                                 "name": "sunshine-live-list-eh",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
-                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName')), '2017-04-01').key1,';EntityPath=feed')]",
+                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').key1,';EntityPath=feed')]",
                                 "name": "sunshine-feed-eh",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
