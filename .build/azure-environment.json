@@ -10,15 +10,15 @@
                         },
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('functionStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')), '2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "DataStorageConnectionString",
-                            "value": ""
+                            "value": "[concat('Endpoint=sb://', variables('EventHubsName'), '.servicebus.windows.net/;SharedAccessKeyName=AzureFunctions;SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName')), '2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "IoTHubConnectionString",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('dataStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('dataStorageName')), '2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -26,7 +26,7 @@
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('functionStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')), '2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
@@ -47,7 +47,8 @@
                 "reserved": false
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('dataStorageName'))]",
                 "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
             ],
             "apiVersion": "2016-03-01",
@@ -57,7 +58,16 @@
         {
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('storageName')]",
+            "name": "[variables('functionStorageName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "accountType": "Standard_LRS"
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('dataStorageName')]",
             "location": "[parameters('location')]",
             "properties": {
                 "accountType": "Standard_LRS"
@@ -83,6 +93,9 @@
                 "tier": "Standard",
                 "capacity": 1
             },
+            "dependsOn": [
+                "[variables('EventHubsName')]"
+            ],
             "properties": {
                 "operationsMonitoringProperties": {
                     "events": {
@@ -101,19 +114,19 @@
                         "serviceBusQueues": [],
                         "serviceBusTopics": [],
                         "eventHubs": [{
-                                "connectionString": "[concat('Endpoint=sb://', variables('IoTHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('IoTHubsName'), ';SharedAccessKey=****;EntityPath=live-data')]",
+                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName')), '2015-05-01-preview').key1,';EntityPath=live-data')]",
                                 "name": "sunshine-live-data-eh",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
-                                "connectionString": "[concat('Endpoint=sb://', variables('IoTHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('IoTHubsName'), ';SharedAccessKey=****;EntityPath=live-list')]",
+                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName')), '2015-05-01-preview').key1,';EntityPath=live-list')]",
                                 "name": "sunshine-live-list-eh",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
-                                "connectionString": "[concat('Endpoint=sb://', variables('IoTHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('IoTHubsName'), ';SharedAccessKey=****;EntityPath=feed')]",
+                                "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName')), '2015-05-01-preview').key1,';EntityPath=feed')]",
                                 "name": "sunshine-feed-eh",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
@@ -383,18 +396,6 @@
                 "[resourceId('Microsoft.EventHub/namespaces', variables('EventHubsName'))]"
             ],
             "properties": {}
-        },
-        {
-            "type": "Microsoft.ContainerRegistry/registries",
-            "sku": {
-                "name": "[parameters('registrySku')]"
-            },
-            "name": "[variables('registryName')]",
-            "apiVersion": "2017-10-01",
-            "location": "[parameters('location')]",
-            "properties": {
-                "adminUserEnabled": false
-            }
         }
     ],
     "parameters": {
@@ -410,10 +411,21 @@
     },
     "variables": {
         "functionAppName": "[concat(parameters('name'), '-functions')]",
-        "storageName": "[replace(concat(parameters('name'), 'storage'), '-', '')]",
+        "functionStorageName": "[replace(concat(parameters('name'), 'funcstorage'), '-', '')]",
+        "dataStorageName": "[replace(concat(parameters('name'), 'datastorage'), '-', '')]",
         "appInsightsName": "[concat(parameters('name'), '-app-insights')]",
         "IoTHubsName": "[concat(parameters('name'), '-iot-hub')]",
         "EventHubsName": "[concat(parameters('name'), '-event-hub')]"
+    },
+    "outputs": {
+        "functionAppName": {
+            "type": "string",
+            "value": "[variables('functionAppName')]"
+        },
+        "IoTHubsName": {
+            "type": "string",
+            "value": "[variables('IoTHubsName')]"
+        }
     },
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0"
