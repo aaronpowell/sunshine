@@ -115,19 +115,19 @@
                         "serviceBusTopics": [],
                         "eventHubs": [{
                                 "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryKey,';EntityPath=live-data')]",
-                                "name": "sunshine-live-data-eh",
+                                "name": "live-data",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
                                 "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryKey,';EntityPath=live-list')]",
-                                "name": "sunshine-live-list-eh",
+                                "name": "live-list",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
                                 "connectionString": "[concat('Endpoint=sb://', variables('EventHubsName'), '-eh.servicebus.windows.net:5671/;SharedAccessKeyName=iothubroutes_', variables('EventHubsName'), ';SharedAccessKey=',listKeys(resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('EventHubsName'), 'AzureFunctions'), '2017-04-01').primaryKey,';EntityPath=feed')]",
-                                "name": "sunshine-feed-eh",
+                                "name": "feed",
                                 "subscriptionId": "[subscription().id]",
                                 "resourceGroup": "[resourceGroup().name]"
                             }
@@ -139,7 +139,7 @@
                             "source": "DeviceMessages",
                             "condition": "__messageType='liveList'",
                             "endpointNames": [
-                                "sunshine-live-list-eh"
+                                "live-list"
                             ],
                             "isEnabled": true
                         },
@@ -148,7 +148,7 @@
                             "source": "DeviceMessages",
                             "condition": "__messageType='liveData'",
                             "endpointNames": [
-                                "sunshine-live-data-eh"
+                                "live-data"
                             ],
                             "isEnabled": true
                         },
@@ -157,7 +157,7 @@
                             "source": "DeviceMessages",
                             "condition": "__messageType='feed'",
                             "endpointNames": [
-                                "sunshine-feed-eh"
+                                "feed"
                             ],
                             "isEnabled": true
                         }
