@@ -114,19 +114,19 @@
                         "serviceBusQueues": [],
                         "serviceBusTopics": [],
                         "eventHubs": [{
-                                "connectionString": "[concat(listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), concat('live-list/', variables('IoTHubsName'))), '2017-04-01').primaryConnectionString, ';EntityPath=live-list')]",
+                                "connectionString": "[listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), concat('/live-list/', variables('IoTHubsName'))), '2017-04-01').primaryConnectionString]",
                                 "name": "sunshine-live-list-eh",
                                 "subscriptionId": "[subscription().subscriptionId]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
-                                "connectionString": "[concat(listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), concat('live-data/', variables('IoTHubsName'))), '2017-04-01').primaryConnectionString, ';EntityPath=live-data')]",
+                                "connectionString": "[listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), concat('/live-data/', variables('IoTHubsName'))), '2017-04-01').primaryConnectionString]",
                                 "name": "sunshine-live-data-eh",
                                 "subscriptionId": "[subscription().subscriptionId]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
-                                "connectionString": "[concat(listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), concat('feed/', variables('IoTHubsName'))), '2017-04-01').primaryConnectionString, ';EntityPath=feed')]",
+                                "connectionString": "[listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), concat('/feed/', variables('IoTHubsName'))), '2017-04-01').primaryConnectionString]",
                                 "name": "sunshine-feed-eh",
                                 "subscriptionId": "[subscription().subscriptionId]",
                                 "resourceGroup": "[resourceGroup().name]"
