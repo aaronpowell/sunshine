@@ -402,11 +402,14 @@
         "name": {
             "type": "string",
             "metadata": {
-                "description": "Short name for the resources within this stack"
+                "description": "Name prefix for the resources to be created"
             }
         },
         "location": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Azure Region for each resource to be created in"
+            }
         }
     },
     "variables": {

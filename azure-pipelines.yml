@@ -222,7 +222,7 @@ jobs:
         location: '$(azureResourceLocation)'
         templateLocation: Linked artifact
         csmFile: '$(System.DefaultWorkingDirectory)/.build/azure-environment.json'
-        overrideParameters: '-name $(azureResourceNamePrefix) -location $(azureResourceLocation)'
+        overrideParameters: '-name $(azureResourceNamePrefix) -location "$(azureResourceLocation)"'
         deploymentOutputs: ResourceGroupDeploymentOutputs
     - task: PowerShell@2
       displayName: Publish ARM outputs for asset
