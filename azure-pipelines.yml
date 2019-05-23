@@ -8,6 +8,30 @@ variables:
   azureResourceLocation: 'Australia East'
 
 jobs:
+  - job: PrepareArtifactStorage
+    displayName: Setup Artifact Storage Azure Resources
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Azure Deployment: Artifact Storage'
+      inputs:
+        azureSubscription: '$(azureSubscription)'
+        resourceGroupName: '$(azureResourceNamePrefix)-shared'
+        location: '$(azureResourceLocation)'
+        templateLocation: Linked artifact
+        csmFile: '$(Build.SourcesDirectory)/.build/artifact-storage.json'
+        overrideParameters: '-name $(azureResourceNamePrefix) -location "$(azureResourceLocation)"'
+        deploymentOutputs: ResourceGroupDeploymentOutputs
+
+    - task: PowerShell@2
+      displayName: Convert ARM output to environment variables
+      name: armVar
+      inputs:
+        targetType: filePath
+        filePath: '$(Build.SourcesDirectory)/.build/Set-ArtifactStorageResourceManagerOutput.ps1'
+        arguments: -ResourceManagerOutput '$(ResourceGroupDeploymentOutputs)'
+
   - job: Build
     pool:
       vmImage: 'Ubuntu-16.04'
@@ -93,6 +117,7 @@ jobs:
   - job: BuildImages_amd64
     displayName: Build Images for IoT Edge (amd64)
     dependsOn:
+      - PrepareArtifactStorage
       - PrepareAzureACR
       - Build
     pool:
@@ -125,13 +150,21 @@ jobs:
         azureSubscriptionEndpoint: '$(azureSubscription)'
         azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
         defaultPlatform: amd64
-    - task: PublishBuildArtifacts@1
+    - task: AzureFileCopy@3
       displayName: 'Publish Artifact: IoT Edge Deployment'
       continueOnError: true
+      inputs:
+        sourcePath: $(Build.ArtifactStagingDirectory)/**
+        azureSubscription: $(azureSubscription)
+        destination: azureBlob
+        storage: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
+        containerName: artifacts
+        blobPrefix: $(Build.BuildId)
 
   - job: BuildImages_arm32v7
     displayName: Build Images for IoT Edge (arm32v7)
     dependsOn:
+      - PrepareArtifactStorage
       - PrepareAzureACR
       - Build
     pool:
@@ -164,13 +197,21 @@ jobs:
         azureSubscriptionEndpoint: '$(azureSubscription)'
         azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
         defaultPlatform: arm32v7
-    - task: PublishBuildArtifacts@1
+    - task: AzureFileCopy@3
       displayName: 'Publish Artifact: IoT Edge Deployment'
       continueOnError: true
+      inputs:
+        sourcePath: $(Build.ArtifactStagingDirectory)/**
+        azureSubscription: $(azureSubscription)
+        destination: azureBlob
+        storage: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
+        containerName: artifacts
+        blobPrefix: $(Build.BuildId)
 
   - job: BuildImages_amd64_debug
     displayName: Build Images for IoT Edge (amd64.debug)
     dependsOn:
+      - PrepareArtifactStorage
       - PrepareAzureACR
       - Build
     pool:
@@ -203,9 +244,16 @@ jobs:
         azureSubscriptionEndpoint: '$(azureSubscription)'
         azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
         defaultPlatform: amd64.debug
-    - task: PublishBuildArtifacts@1
+    - task: AzureFileCopy@3
       displayName: 'Publish Artifact: IoT Edge Deployment'
       continueOnError: true
+      inputs:
+        sourcePath: $(Build.ArtifactStagingDirectory)/**
+        azureSubscription: $(azureSubscription)
+        destination: azureBlob
+        storage: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
+        containerName: artifacts
+        blobPrefix: $(Build.BuildId)
 
   - job: PrepareAzureIoTEnvrionment
     displayName: Prepare Azure IoT Environment

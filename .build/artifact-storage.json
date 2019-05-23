@@ -1,0 +1,38 @@
+{
+    "resources": [
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('artifactStorageName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "accountType": "Standard_LRS"
+            }
+        }
+    ],
+    "parameters": {
+        "name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name prefix for the resources to be created"
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure Region for each resource to be created in"
+            }
+        }
+    },
+    "variables": {
+        "artifactStorageName": "[replace(concat(parameters('name'), 'artifacts'), '-', '')]",
+    },
+    "outputs": {
+        "artifactStorageName": {
+            "type": "string",
+            "value": "[variables('artifactStorageName')]"
+        }
+    },
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0"
+}
