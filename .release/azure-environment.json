@@ -86,7 +86,7 @@
         {
             "type": "Microsoft.Devices/IotHubs",
             "apiVersion": "2018-04-01",
-            "name": "[variables('IoTHubsName')]",
+            "name": "[variables('IotHubName')]",
             "location": "[parameters('location')]",
             "sku": {
                 "name": "S1",
@@ -114,19 +114,19 @@
                         "serviceBusQueues": [],
                         "serviceBusTopics": [],
                         "eventHubs": [{
-                                "connectionString": "[listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), 'live-list', variables('IoTHubsName')), '2017-04-01').primaryConnectionString]",
+                                "connectionString": "[listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), 'live-list', variables('IotHubName')), '2017-04-01').primaryConnectionString]",
                                 "name": "sunshine-live-list-eh",
                                 "subscriptionId": "[subscription().subscriptionId]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
-                                "connectionString": "[listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), 'live-data', variables('IoTHubsName')), '2017-04-01').primaryConnectionString]",
+                                "connectionString": "[listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), 'live-data', variables('IotHubName')), '2017-04-01').primaryConnectionString]",
                                 "name": "sunshine-live-data-eh",
                                 "subscriptionId": "[subscription().subscriptionId]",
                                 "resourceGroup": "[resourceGroup().name]"
                             },
                             {
-                                "connectionString": "[listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), 'feed', variables('IoTHubsName')), '2017-04-01').primaryConnectionString]",
+                                "connectionString": "[listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', variables('EventHubsName'), 'feed', variables('IotHubName')), '2017-04-01').primaryConnectionString]",
                                 "name": "sunshine-feed-eh",
                                 "subscriptionId": "[subscription().subscriptionId]",
                                 "resourceGroup": "[resourceGroup().name]"
@@ -289,7 +289,7 @@
         {
             "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
             "apiVersion": "2017-04-01",
-            "name": "[concat(variables('EventHubsName'), '/feed/', variables('IoTHubsName'))]",
+            "name": "[concat(variables('EventHubsName'), '/feed/', variables('IotHubName'))]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'feed')]",
@@ -304,7 +304,7 @@
         {
             "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
             "apiVersion": "2017-04-01",
-            "name": "[concat(variables('EventHubsName'), '/live-data/', variables('IoTHubsName'))]",
+            "name": "[concat(variables('EventHubsName'), '/live-data/', variables('IotHubName'))]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'live-data')]",
@@ -319,7 +319,7 @@
         {
             "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
             "apiVersion": "2017-04-01",
-            "name": "[concat(variables('EventHubsName'), '/live-list/', variables('IoTHubsName'))]",
+            "name": "[concat(variables('EventHubsName'), '/live-list/', variables('IotHubName'))]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('EventHubsName'), 'live-list')]",
@@ -414,7 +414,7 @@
         "functionStorageName": "[replace(concat(parameters('name'), 'funcstorage'), '-', '')]",
         "dataStorageName": "[replace(concat(parameters('name'), 'datastorage'), '-', '')]",
         "appInsightsName": "[concat(parameters('name'), '-app-insights')]",
-        "IoTHubsName": "[concat(parameters('name'), '-iot-hub')]",
+        "IotHubName": "[concat(parameters('name'), '-iot-hub')]",
         "EventHubsName": "[concat(parameters('name'), '-event-hub')]"
     },
     "outputs": {
@@ -422,13 +422,9 @@
             "type": "string",
             "value": "[variables('functionAppName')]"
         },
-        "IoTHubsName": {
+        "IotHubName": {
             "type": "string",
-            "value": "[variables('IoTHubsName')]"
-        },
-        "HubConnectionString": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.Devices/IotHubs', variables('IoTHubsName')), '2018-04-01').primaryConnectionString]"
+            "value": "[variables('IotHubName')]"
         }
     },
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",

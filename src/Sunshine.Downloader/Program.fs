@@ -11,72 +11,74 @@ let gev s = Environment.GetEnvironmentVariable s
 let baseUrl = gev "SUNSHINE_URL"
 let username = gev "SUNSHINE_USERNAME"
 let password = gev "SUNSHINE_PASSWORD"
-let iotHubConnectionString = gev "IOT_CONNSTR"
+
+let getIotHubClient() =
+    async {
+    let amqpSetting = AmqpTransportSettings(TransportType.Amqp_Tcp_Only) :> ITransportSettings;
+
+    // Open a connection to the Edge runtime
+    let! ioTHubModuleClient = [| amqpSetting |]
+                              |> ModuleClient.CreateFromEnvironmentAsync
+                              |> Async.AwaitTask
+    do! ioTHubModuleClient.OpenAsync() |> Async.AwaitTask
+    return ioTHubModuleClient }
 
 [<EntryPoint>]
 let main _ =
-    let iotHubClient = DeviceClient.CreateFromConnectionString(iotHubConnectionString, TransportType.Mqtt)
-
     async {
-            let token = getAuthToken username password
-            let getData' = getData token (Uri baseUrl)
+    let! iotHubClient = getIotHubClient()
+    let token = getAuthToken username password
+    let getData' = getData token (Uri baseUrl)
 
-            let! specs = getSpec getData'
-            let deviceId = specs.Device.DeviceId |> toS
+    let! specs = getSpec getData'
+    let deviceId = specs.Device.DeviceId |> toS
 
-            printfn "Up and running, we found an inverter with the ID %s" deviceId
+    printfn "Up and running, we found an inverter with the ID %s" deviceId
 
-            let mutable correlationId = Guid.NewGuid()
+    let mutable correlationId = Guid.NewGuid()
+
+    match! getLiveList getData' deviceId with
+    | Some liveList ->
+        let rec listPoller() = async {
+            do! int(TimeSpan.FromMinutes(5.).TotalMilliseconds) |> Async.Sleep
+            correlationId <- Guid.NewGuid()
 
             match! getLiveList getData' deviceId with
-            | Some liveList ->
-                let rec listPoller() = async {
-                    do! int(TimeSpan.FromMinutes(5.).TotalMilliseconds) |> Async.Sleep
-                    correlationId <- Guid.NewGuid()
+            | Some liveList -> do! sendIoTMessage iotHubClient "liveList" correlationId liveList
+            | None -> ignore()
 
-                    match! getLiveList getData' deviceId with
-                    | Some liveList ->
-                        do! sendIoTMessage iotHubClient "liveList" correlationId liveList
-                    | None ->
-                        ignore()
+            listPoller() |> Async.Start }
+        do! sendIoTMessage iotHubClient "liveList" correlationId liveList
+        listPoller() |> Async.Start
 
-                    listPoller() |> Async.Start }
-                do! sendIoTMessage iotHubClient "liveList" correlationId liveList
-                listPoller() |> Async.Start
+        let rec dataPoller() = async {
+            match! getLiveData getData' deviceId with
+            | Some liveData -> do! sendIoTMessage iotHubClient "liveData" correlationId liveData
+            | None -> ignore()
 
-                let rec dataPoller() = async {
-                    match! getLiveData getData' deviceId with
-                    | Some liveData ->
-                        do! sendIoTMessage iotHubClient "liveData" correlationId liveData
+            do! int(TimeSpan.FromSeconds(20.).TotalMilliseconds) |> Async.Sleep
+            dataPoller() |> Async.Start }
 
-                    | None ->
-                        ignore()
+        dataPoller() |> Async.Start
 
-                    do! int(TimeSpan.FromSeconds(20.).TotalMilliseconds) |> Async.Sleep
-                    dataPoller() |> Async.Start }
+    | None ->
+        printfn "Well that shouldn't have happened..."
 
-                dataPoller() |> Async.Start
+    let rec feedPoller() = async {
+        match! getPgridFeed getData' DateTime.Today deviceId with
+        | Some feed -> do! sendIoTMessage iotHubClient "feed" correlationId feed
+        | None -> ignore()
 
-            | None ->
-                printfn "Well that shouldn't have happened..."
+        do! int(TimeSpan.FromMinutes(5.).TotalMilliseconds) |> Async.Sleep
+        feedPoller() |> Async.Start }
 
-            let rec feedPoller() = async {
-                match! getPgridFeed getData' DateTime.Today deviceId with
-                | Some feed ->
-                    do! sendIoTMessage iotHubClient "feed" correlationId feed
-                | None ->
-                    ignore()
+    feedPoller() |> Async.Start
 
-                do! int(TimeSpan.FromMinutes(5.).TotalMilliseconds) |> Async.Sleep
-                feedPoller() |> Async.Start }
+    printfn "Background jobs running, now we're waiting... "
+    if Console.IsInputRedirected then
+        while true do
+            do! Async.Sleep 300000
+    else
+        Console.ReadLine() |> ignore
 
-            feedPoller() |> Async.Start
-
-            printfn "Background jobs running, now we're waiting... "
-            if Console.IsInputRedirected then
-                while true do
-                    do! Async.Sleep 300000
-            else
-                Console.ReadLine() |> ignore
-
-            return 0 } |> Async.RunSynchronously
+    return 0 } |> Async.RunSynchronously

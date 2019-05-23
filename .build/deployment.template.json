@@ -68,8 +68,7 @@
                 "Env": [
                   "SUNSHINE_URL=${SunshineUrl}",
                   "SUNSHINE_USERNAME=${SunshineUser}",
-                  "SUNSHINE_PASSWORD=${SunshinePwd}",
-                  "IOT_CONNSTR=${HubConnectionString}"
+                  "SUNSHINE_PASSWORD=${SunshinePwd}"
                 ]
               }
             }
