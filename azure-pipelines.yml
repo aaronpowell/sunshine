@@ -49,6 +49,24 @@ jobs:
       inputs:
         artifactName: Apps
 
+  - job: PublishReleaseScripts
+    displayName: Publish Release stage artifacts
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+    - task: CopyFiles@2
+      displayName: Copy Release Scripts
+      inputs:
+        contents: |
+          '$(Build.SourcesDirectory)/.build/azure-environment.json'
+          '$(Build.SourcesDirectory)/.build/Set-ReleaseResourceManagerOutput.ps1'
+          '$(Build.SourcesDirectory)/.build/iot-setup.sh'
+        targetFolder: $(Build.ArtifactStagingDirectory)
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      continueOnError: true
+      inputs:
+        artifactName: arm
 
   - job: PrepareAzure
     displayName: Prepare Azure
@@ -57,17 +75,6 @@ jobs:
     pool:
       vmImage: 'Ubuntu-16.04'
     steps:
-    - task: CopyFiles@2
-      displayName: Copy Resource Manager Template for Release
-      inputs:
-        contents: '$(Build.SourcesDirectory)/.build/azure-environment.json'
-        targetFolder: $(Build.ArtifactStagingDirectory)
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact'
-      continueOnError: true
-      inputs:
-        artifactName: arm
-
     - task: AzureResourceGroupDeployment@2
       displayName: 'Azure Deployment:Create ACR'
       inputs:
@@ -84,7 +91,7 @@ jobs:
       name: armVar
       inputs:
         targetType: filePath
-        filePath: '$(Build.SourcesDirectory)/.build/Set-ResourceManagerOutput.ps1'
+        filePath: '$(Build.SourcesDirectory)/.build/Set-BuildResourceManagerOutput.ps1'
         arguments: -ResourceManagerOutput '$(ResourceGroupDeploymentOutputs)'
 
   - job: BuildImages_amd64

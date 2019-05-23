@@ -425,6 +425,10 @@
         "IoTHubsName": {
             "type": "string",
             "value": "[variables('IoTHubsName')]"
+        },
+        "HubConnectionString": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Devices/IotHubs', variables('IoTHubsName')), '2018-04-01').primaryConnectionString]"
         }
     },
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
