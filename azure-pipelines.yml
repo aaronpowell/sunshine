@@ -114,146 +114,38 @@ jobs:
         filePath: '$(Build.SourcesDirectory)/.build/Set-BuildResourceManagerOutput.ps1'
         arguments: -ResourceManagerOutput '$(ResourceGroupDeploymentOutputs)'
 
-  - job: BuildImages_amd64
-    displayName: Build Images for IoT Edge (amd64)
-    dependsOn:
-      - PrepareArtifactStorage
-      - PrepareAzureACR
-      - Build
-    pool:
-      vmImage: 'Ubuntu-16.04'
-    variables:
+  - template: .build/template.iot-edge.yml
+    parameters:
+      name: BuildImages_amd64
       CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
       SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
       CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
-    steps:
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download Build Artifacts'
-      inputs:
-        artifactName: Apps
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: ExtractFiles@1
-      displayName: Unpack Build Artifact
-      inputs:
-        destinationFolder: '$(Build.SourcesDirectory)/src/Sunshine.Downloader/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
-        archiveFilePatterns: $(System.DefaultWorkingDirectory)/Apps/Sunshine.Downloader-$(Build.BuildId).zip
-    - task: AzureIoTEdge@2
-      displayName: 'Azure IoT Edge - Build module images (amd64)'
-      inputs:
-        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-        defaultPlatform: amd64
-    - task: AzureIoTEdge@2
-      displayName: 'Azure IoT Edge - Push module images (amd64)'
-      inputs:
-        action: 'Push module images'
-        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-        azureSubscriptionEndpoint: '$(azureSubscription)'
-        azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
-        defaultPlatform: amd64
-    - task: AzureFileCopy@3
-      displayName: 'Publish Artifact: IoT Edge Deployment'
-      continueOnError: true
-      inputs:
-        sourcePath: $(Build.ArtifactStagingDirectory)/**
-        azureSubscription: $(azureSubscription)
-        destination: azureBlob
-        storage: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
-        containerName: artifacts
-        blobPrefix: $(Build.BuildId)
+      defaultPlatform: amd64
+      azureResourceNamePrefix: $(azureResourceNamePrefix)
+      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
+      azureSubscription: $(azureSubscription)
 
-  - job: BuildImages_arm32v7
-    displayName: Build Images for IoT Edge (arm32v7)
-    dependsOn:
-      - PrepareArtifactStorage
-      - PrepareAzureACR
-      - Build
-    pool:
-      vmImage: 'Ubuntu-16.04'
-    variables:
+  - template: .build/template.iot-edge.yml
+    parameters:
+      name: BuildImages_arm32v7
       CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
       SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
       CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
-    steps:
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download Build Artifacts'
-      inputs:
-        artifactName: Apps
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: ExtractFiles@1
-      displayName: Unpack Build Artifact
-      inputs:
-        destinationFolder: '$(Build.SourcesDirectory)/src/Sunshine.Downloader/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
-        archiveFilePatterns: $(System.DefaultWorkingDirectory)/Apps/Sunshine.Downloader-$(Build.BuildId).zip
-    - task: AzureIoTEdge@2
-      displayName: 'Azure IoT Edge - Build module images (arm32v7)'
-      inputs:
-        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-        defaultPlatform: arm32v7
-    - task: AzureIoTEdge@2
-      displayName: 'Azure IoT Edge - Push module images (arm32v7)'
-      inputs:
-        action: 'Push module images'
-        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-        azureSubscriptionEndpoint: '$(azureSubscription)'
-        azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
-        defaultPlatform: arm32v7
-    - task: AzureFileCopy@3
-      displayName: 'Publish Artifact: IoT Edge Deployment'
-      continueOnError: true
-      inputs:
-        sourcePath: $(Build.ArtifactStagingDirectory)/**
-        azureSubscription: $(azureSubscription)
-        destination: azureBlob
-        storage: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
-        containerName: artifacts
-        blobPrefix: $(Build.BuildId)
+      defaultPlatform: arm32v7
+      azureResourceNamePrefix: $(azureResourceNamePrefix)
+      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
+      azureSubscription: $(azureSubscription)
 
-  - job: BuildImages_amd64_debug
-    displayName: Build Images for IoT Edge (amd64.debug)
-    dependsOn:
-      - PrepareArtifactStorage
-      - PrepareAzureACR
-      - Build
-    pool:
-      vmImage: 'Ubuntu-16.04'
-    variables:
+  - template: .build/template.iot-edge.yml
+    parameters:
+      name: BuildImages_amd64_debug
       CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
       SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
       CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
-    steps:
-    - task: DownloadBuildArtifacts@0
-      displayName: 'Download Build Artifacts'
-      inputs:
-        artifactName: Apps
-        downloadPath: $(System.DefaultWorkingDirectory)
-    - task: ExtractFiles@1
-      displayName: Unpack Build Artifact
-      inputs:
-        destinationFolder: '$(Build.SourcesDirectory)/src/Sunshine.Downloader/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
-        archiveFilePatterns: $(System.DefaultWorkingDirectory)/Apps/Sunshine.Downloader-$(Build.BuildId).zip
-    - task: AzureIoTEdge@2
-      displayName: 'Azure IoT Edge - Build module images (amd64.debug)'
-      inputs:
-        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-        defaultPlatform: amd64.debug
-    - task: AzureIoTEdge@2
-      displayName: 'Azure IoT Edge - Push module images (amd64.debug)'
-      inputs:
-        action: 'Push module images'
-        templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-        azureSubscriptionEndpoint: '$(azureSubscription)'
-        azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/$(azureResourceNamePrefix)-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
-        defaultPlatform: amd64.debug
-    - task: AzureFileCopy@3
-      displayName: 'Publish Artifact: IoT Edge Deployment'
-      continueOnError: true
-      inputs:
-        sourcePath: $(Build.ArtifactStagingDirectory)/**
-        azureSubscription: $(azureSubscription)
-        destination: azureBlob
-        storage: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
-        containerName: artifacts
-        blobPrefix: $(Build.BuildId)
+      defaultPlatform: amd64.debug
+      azureResourceNamePrefix: $(azureResourceNamePrefix)
+      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
+      azureSubscription: $(azureSubscription)
 
   - job: PrepareAzureIoTEnvrionment
     displayName: Prepare Azure IoT Environment

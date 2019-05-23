@@ -1,0 +1,61 @@
+parameters:
+  name: ''
+  CONTAINER_REGISTRY_SERVER: ''
+  SUBSCRIPTION_ID: ''
+  CONTAINER_REGISTRY_SERVER_NAME: ''
+  defaultPlatform: ''
+  azureResourceNamePrefix: ''
+  ARTIFACT_STORAGE_NAME: ''
+  azureSubscription: ''
+
+jobs:
+- job: ${{ parameters.name }}
+  displayName: Build Images for IoT Edge (${{ parameters.defaultPlatform }})
+  dependsOn:
+    - PrepareArtifactStorage
+    - PrepareAzureACR
+    - Build
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  variables:
+    CONTAINER_REGISTRY_SERVER: ${{ parameters.CONTAINER_REGISTRY_SERVER }}
+    SUBSCRIPTION_ID: ${{ parameters.SUBSCRIPTION_ID }}
+    CONTAINER_REGISTRY_SERVER_NAME: ${{ parameters.CONTAINER_REGISTRY_SERVER_NAME }}
+  steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download Build Artifacts'
+    inputs:
+      artifactName: Apps
+      downloadPath: $(System.DefaultWorkingDirectory)
+
+  - task: ExtractFiles@1
+    displayName: Unpack Build Artifact
+    inputs:
+      destinationFolder: '$(Build.SourcesDirectory)/src/Sunshine.Downloader/bin/$(BuildConfiguration)/netcoreapp2.2/publish'
+      archiveFilePatterns: $(System.DefaultWorkingDirectory)/Apps/Sunshine.Downloader-$(Build.BuildId).zip
+
+  - task: AzureIoTEdge@2
+    displayName: Azure IoT Edge - Build module images (${{ parameters.defaultPlatform }})
+    inputs:
+      templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+      defaultPlatform: amd64
+
+  - task: AzureIoTEdge@2
+    displayName: Azure IoT Edge - Push module images (${{ parameters.defaultPlatform }})
+    inputs:
+      action: 'Push module images'
+      templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
+      azureSubscriptionEndpoint: ${{ parameters.azureSubscription }}
+      azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/${{ parameters.azureResourceNamePrefix }}-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
+      defaultPlatform: ${{ parameters.defaultPlatform }}
+
+  - task: AzureFileCopy@3
+    displayName: 'Publish Artifact: IoT Edge Deployment'
+    continueOnError: true
+    inputs:
+      sourcePath: $(Build.ArtifactStagingDirectory)/**
+      azureSubscription: $(azureSubscription)
+      destination: azureBlob
+      storage: ${{ parameters.ARTIFACT_STORAGE_NAME }}
+      containerName: artifacts
+      blobPrefix: $(Build.BuildId)
