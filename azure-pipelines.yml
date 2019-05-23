@@ -5,6 +5,7 @@ variables:
   azureSubscription: 'Azure RG - shared'
   azureResourceNamePrefix: sunshine
   buildConfiguration: 'Release'
+  azureResourceLocation: 'Australia East'
 
 jobs:
   - job: Build
@@ -65,10 +66,8 @@ jobs:
       inputs:
         artifactName: arm
 
-  - job: PrepareAzure
-    displayName: Prepare Azure
-    variables:
-      azureResourceLocation: 'Australia East'
+  - job: PrepareAzureACR
+    displayName: Prepare Azure ACR
     pool:
       vmImage: 'Ubuntu-16.04'
     steps:
@@ -207,3 +206,32 @@ jobs:
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: IoT Edge Deployment'
       continueOnError: true
+
+  - job: PrepareAzureIoTEnvrionment
+    displayName: Prepare Azure IoT Environment
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    variables:
+      resourceGroupName: sunshine-prod
+    steps:
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Azure Deployment:Create Or Update Resource Group action on sunshine-prod'
+      inputs:
+        azureSubscription: '$(azureSubscription)'
+        resourceGroupName: '$(azureResourceNamePrefix)-prod'
+        location: '$(azureResourceLocation)'
+        templateLocation: Linked artifact
+        csmFile: '$(System.DefaultWorkingDirectory)/.build/azure-environment.json'
+        overrideParameters: '-name $(azureResourceNamePrefix) -location $(azureResourceLocation)'
+        deploymentOutputs: ResourceGroupDeploymentOutputs
+    - task: PowerShell@2
+      displayName: Publish ARM outputs for asset
+      inputs:
+        targetType: filePath
+        filePath: '$(Build.SourcesDirectory)/.build/Set-ReleaseResourceManagerOutput.ps1'
+        arguments: -ResourceManagerOutput '$(ResourceGroupDeploymentOutputs)'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      continueOnError: true
+      inputs:
+        artifactName: arm
