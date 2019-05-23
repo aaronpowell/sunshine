@@ -57,10 +57,7 @@ jobs:
     - task: CopyFiles@2
       displayName: Copy Release Scripts
       inputs:
-        contents: |
-          '$(Build.SourcesDirectory)/.build/azure-environment.json'
-          '$(Build.SourcesDirectory)/.build/Set-ReleaseResourceManagerOutput.ps1'
-          '$(Build.SourcesDirectory)/.build/iot-setup.sh'
+        contents: $(Build.SourcesDirectory)/.release/**
         targetFolder: $(Build.ArtifactStagingDirectory)
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact'
