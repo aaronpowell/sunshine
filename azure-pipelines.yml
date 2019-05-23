@@ -93,14 +93,14 @@ jobs:
   - job: BuildImages_amd64
     displayName: Build Images for IoT Edge (amd64)
     dependsOn:
-      - PrepareAzure
+      - PrepareAzureACR
       - Build
     pool:
       vmImage: 'Ubuntu-16.04'
     variables:
-      CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
-      SUBSCRIPTION_ID: $[dependencies.PrepareAzure.outputs['armVar.SUBSCRIPTION_ID']]
-      CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
+      CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
+      SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
+      CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
     steps:
     - task: DownloadBuildArtifacts@0
       displayName: 'Download Build Artifacts'
@@ -132,14 +132,14 @@ jobs:
   - job: BuildImages_arm32v7
     displayName: Build Images for IoT Edge (arm32v7)
     dependsOn:
-      - PrepareAzure
+      - PrepareAzureACR
       - Build
     pool:
       vmImage: 'Ubuntu-16.04'
     variables:
-      CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
-      SUBSCRIPTION_ID: $[dependencies.PrepareAzure.outputs['armVar.SUBSCRIPTION_ID']]
-      CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
+      CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
+      SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
+      CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
     steps:
     - task: DownloadBuildArtifacts@0
       displayName: 'Download Build Artifacts'
@@ -171,14 +171,14 @@ jobs:
   - job: BuildImages_amd64_debug
     displayName: Build Images for IoT Edge (amd64.debug)
     dependsOn:
-      - PrepareAzure
+      - PrepareAzureACR
       - Build
     pool:
       vmImage: 'Ubuntu-16.04'
     variables:
-      CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
-      SUBSCRIPTION_ID: $[dependencies.PrepareAzure.outputs['armVar.SUBSCRIPTION_ID']]
-      CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzure.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
+      CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
+      SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
+      CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
     steps:
     - task: DownloadBuildArtifacts@0
       displayName: 'Download Build Artifacts'
