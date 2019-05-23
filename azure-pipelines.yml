@@ -2,7 +2,7 @@ trigger:
 - master
 
 variables:
-  azureSubscription: 'Azure RG - shared'
+  azureSubscription: 'Sunshine Service Connection'
   azureResourceNamePrefix: sunshine
   buildConfiguration: 'Release'
   azureResourceLocation: 'Australia East'
