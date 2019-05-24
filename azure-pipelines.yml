@@ -120,9 +120,9 @@ jobs:
       CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
       SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
       CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
+      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['armVar.ARTIFACT_STORAGE_NAME']]
       defaultPlatform: amd64
       azureResourceNamePrefix: $(azureResourceNamePrefix)
-      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['armVar.ARTIFACT_STORAGE_NAME']]
       azureSubscription: $(azureSubscription)
 
   - template: .build/template.iot-edge.yml
@@ -131,9 +131,9 @@ jobs:
       CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
       SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
       CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
+      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['armVar.ARTIFACT_STORAGE_NAME']]
       defaultPlatform: arm32v7
       azureResourceNamePrefix: $(azureResourceNamePrefix)
-      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
       azureSubscription: $(azureSubscription)
 
   - template: .build/template.iot-edge.yml
@@ -142,9 +142,9 @@ jobs:
       CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
       SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
       CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
+      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['armVar.ARTIFACT_STORAGE_NAME']]
       defaultPlatform: amd64.debug
       azureResourceNamePrefix: $(azureResourceNamePrefix)
-      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
       azureSubscription: $(azureSubscription)
 
   - job: PrepareAzureIoTEnvrionment
