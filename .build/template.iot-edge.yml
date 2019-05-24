@@ -1,9 +1,9 @@
 parameters:
   name: ''
+  ARTIFACT_STORAGE_NAME: ''
   CONTAINER_REGISTRY_SERVER: ''
   SUBSCRIPTION_ID: ''
   CONTAINER_REGISTRY_SERVER_NAME: ''
-  ARTIFACT_STORAGE_NAME: ''
   defaultPlatform: ''
   azureResourceNamePrefix: ''
   azureSubscription: ''
