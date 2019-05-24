@@ -51,7 +51,7 @@ jobs:
 
   - task: AzureCLI@1
     displayName: Upload deployment artifact
-    input:
+    inputs:
       azureSubscription: ${{ parameters.azureSubscription }}
       scriptLocation: inlineScript
       inlineScript: |
