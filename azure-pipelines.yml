@@ -122,7 +122,7 @@ jobs:
       CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
       defaultPlatform: amd64
       azureResourceNamePrefix: $(azureResourceNamePrefix)
-      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['ARTIFACT_STORAGE_NAME']]
+      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['armVar.ARTIFACT_STORAGE_NAME']]
       azureSubscription: $(azureSubscription)
 
   - template: .build/template.iot-edge.yml
