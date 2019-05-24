@@ -26,7 +26,7 @@ jobs:
 
     - task: PowerShell@2
       displayName: Convert ARM output to environment variables
-      name: armVar
+      name: artifactVars
       inputs:
         targetType: filePath
         filePath: '$(Build.SourcesDirectory)/.build/Set-ArtifactStorageResourceManagerOutput.ps1'
@@ -120,7 +120,7 @@ jobs:
       CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
       SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
       CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
-      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['armVar.ARTIFACT_STORAGE_NAME']]
+      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['artifactVars.ARTIFACT_STORAGE_NAME']]
       defaultPlatform: amd64
       azureResourceNamePrefix: $(azureResourceNamePrefix)
       azureSubscription: $(azureSubscription)
@@ -131,7 +131,7 @@ jobs:
       CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
       SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
       CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
-      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['armVar.ARTIFACT_STORAGE_NAME']]
+      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['artifactVars.ARTIFACT_STORAGE_NAME']]
       defaultPlatform: arm32v7
       azureResourceNamePrefix: $(azureResourceNamePrefix)
       azureSubscription: $(azureSubscription)
@@ -142,7 +142,7 @@ jobs:
       CONTAINER_REGISTRY_SERVER: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER']]
       SUBSCRIPTION_ID: $[dependencies.PrepareAzureACR.outputs['armVar.SUBSCRIPTION_ID']]
       CONTAINER_REGISTRY_SERVER_NAME: $[dependencies.PrepareAzureACR.outputs['armVar.CONTAINER_REGISTRY_SERVER_NAME']]
-      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['armVar.ARTIFACT_STORAGE_NAME']]
+      ARTIFACT_STORAGE_NAME: $[dependencies.PrepareArtifactStorage.outputs['artifactVars.ARTIFACT_STORAGE_NAME']]
       defaultPlatform: amd64.debug
       azureResourceNamePrefix: $(azureResourceNamePrefix)
       azureSubscription: $(azureSubscription)
