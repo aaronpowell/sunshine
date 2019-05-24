@@ -54,11 +54,12 @@ jobs:
     inputs:
       azureSubscription: ${{ parameters.azureSubscription }}
       scriptLocation: inlineScript
+      arguments: ${{ parameters.ARTIFACT_STORAGE_NAME }} $(Build.ArtifactStagingDirectory) ${{ parameters.defaultPlatform }} $(Build.BuildId)
       inlineScript: |
-        account_name='${{ parameters.ARTIFACT_STORAGE_NAME }}'
+        account_name=$0
         key=$(az storage account keys list --account-name $account_name | jq '.[0].value')
         exists=$(az storage container exists --account-name $account_name --name artifacts --account-key $key | jq '.exists')
         if [ "$exists" == false ]; then
                 az storage container create --name artifacts --account-name $account_name --account-key $key
         fi
-        az storage blob upload --container-name artifacts --file $(Build.ArtifactStagingDirectory)/deployment.${{ parameters.defaultPlatform }}.json --name $(Build.BuildId)/deployment.${{ parameters.defaultPlatform }}.json --account-name $account_name --account-key $key
+        az storage blob upload --container-name artifacts --file $1/deployment.$2.json --name $3/deployment.$2.json --account-name $account_name --account-key $key
