@@ -56,6 +56,7 @@ jobs:
       scriptLocation: inlineScript
       arguments: ${{ parameters.ARTIFACT_STORAGE_NAME }} $(Build.ArtifactStagingDirectory) ${{ parameters.defaultPlatform }} $(Build.BuildId)
       inlineScript: |
+        echo $0
         account_name=$0
         key=$(az storage account keys list --account-name $account_name | jq '.[0].value')
         exists=$(az storage container exists --account-name $account_name --name artifacts --account-key $key | jq '.exists')
