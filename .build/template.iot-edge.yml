@@ -38,7 +38,7 @@ jobs:
     displayName: Azure IoT Edge - Build module images (${{ parameters.defaultPlatform }})
     inputs:
       templateFilePath: '$(Build.SourcesDirectory)/.build/deployment.template.json'
-      defaultPlatform: amd64
+      defaultPlatform: ${{ parameters.defaultPlatform }}
 
   - task: AzureIoTEdge@2
     displayName: Azure IoT Edge - Push module images (${{ parameters.defaultPlatform }})
