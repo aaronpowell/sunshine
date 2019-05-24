@@ -49,13 +49,11 @@ jobs:
       azureContainerRegistry: '{"loginServer":"$(CONTAINER_REGISTRY_SERVER)", "id" : "$(SUBSCRIPTION_ID)/resourceGroups/${{ parameters.azureResourceNamePrefix }}-shared/providers/Microsoft.ContainerRegistry/registries/$(CONTAINER_REGISTRY_SERVER_NAME)"}'
       defaultPlatform: ${{ parameters.defaultPlatform }}
 
-  - task: AzureFileCopy@3
-    displayName: 'Publish Artifact: IoT Edge Deployment'
-    continueOnError: true
-    inputs:
-      sourcePath: $(Build.ArtifactStagingDirectory)/**
-      azureSubscription: $(azureSubscription)
-      destination: azureBlob
-      storage: ${{ parameters.ARTIFACT_STORAGE_NAME }}
-      containerName: artifacts
-      blobPrefix: $(Build.BuildId)
+  - script: |
+      account_name='${{ parameters.ARTIFACT_STORAGE_NAME }}'
+      key=$(az storage account keys list --account-name $account_name | jq '.[0].value')
+      exists=$(az storage container exists --account-name $account_name --name artifacts --account-key $key | jq '.exists')
+      if [ "$exists" == false ]; then
+              az storage container create --name artifacts --account-name $account_name --account-key $key
+      fi
+      az storage blob upload --container-name artifacts --file $(Build.ArtifactStagingDirectory)/deployment.${{ parameters.defaultPlatform }}.json --name $(Build.BuildId)/deployment.${{ parameters.defaultPlatform }}.json --account-name $account_name --account-key $key
