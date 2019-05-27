@@ -4,29 +4,20 @@ open Specs
 open LiveDataDownloader
 open FeedDownloader
 open Utils
-open Microsoft.Azure.Devices.Client
+open IoTWrapper
 
 let gev s = Environment.GetEnvironmentVariable s
 
 let baseUrl = gev "SUNSHINE_URL"
 let username = gev "SUNSHINE_USERNAME"
 let password = gev "SUNSHINE_PASSWORD"
-
-let getIotHubClient() =
-    async {
-    let amqpSetting = AmqpTransportSettings(TransportType.Amqp_Tcp_Only) :> ITransportSettings;
-
-    // Open a connection to the Edge runtime
-    let! ioTHubModuleClient = [| amqpSetting |]
-                              |> ModuleClient.CreateFromEnvironmentAsync
-                              |> Async.AwaitTask
-    do! ioTHubModuleClient.OpenAsync() |> Async.AwaitTask
-    return ioTHubModuleClient }
+let iotConnStr = gev "IOT_CONNSTR"
 
 [<EntryPoint>]
 let main _ =
     async {
-    let! iotHubClient = getIotHubClient()
+    let! iotClient = getIotHubClient iotConnStr
+
     let token = getAuthToken username password
     let getData' = getData token (Uri baseUrl)
 
@@ -44,16 +35,16 @@ let main _ =
             correlationId <- Guid.NewGuid()
 
             match! getLiveList getData' deviceId with
-            | Some liveList -> do! sendIoTMessage iotHubClient "liveList" correlationId liveList
+            | Some liveList -> do! sendIoTMessage iotClient "liveList" correlationId liveList
             | None -> ignore()
 
             listPoller() |> Async.Start }
-        do! sendIoTMessage iotHubClient "liveList" correlationId liveList
+        do! sendIoTMessage iotClient "liveList" correlationId liveList
         listPoller() |> Async.Start
 
         let rec dataPoller() = async {
             match! getLiveData getData' deviceId with
-            | Some liveData -> do! sendIoTMessage iotHubClient "liveData" correlationId liveData
+            | Some liveData -> do! sendIoTMessage iotClient "liveData" correlationId liveData
             | None -> ignore()
 
             do! int(TimeSpan.FromSeconds(20.).TotalMilliseconds) |> Async.Sleep
@@ -66,7 +57,7 @@ let main _ =
 
     let rec feedPoller() = async {
         match! getPgridFeed getData' DateTime.Today deviceId with
-        | Some feed -> do! sendIoTMessage iotHubClient "feed" correlationId feed
+        | Some feed -> do! sendIoTMessage iotClient "feed" correlationId feed
         | None -> ignore()
 
         do! int(TimeSpan.FromMinutes(5.).TotalMilliseconds) |> Async.Sleep

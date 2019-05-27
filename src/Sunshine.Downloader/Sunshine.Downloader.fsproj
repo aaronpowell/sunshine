@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="IotWrapper.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="InverterApi.fs" />
     <Compile Include="../Shared/SpecsData.fs" />
