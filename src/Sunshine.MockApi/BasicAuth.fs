@@ -9,7 +9,6 @@ open FSharp.Control.Tasks.V2.ContextSensitive
 open System.Net.Http.Headers
 open System
 open System.Text
-open System.Security.Claims
 
 type IUserService =
     abstract member AuthenticateAsync : string -> string -> Async<bool>
@@ -18,13 +17,11 @@ type UserService() =
     let users = [("aaron", "password")] |> Map.ofList
 
     interface IUserService with
-
         member __.AuthenticateAsync username password =
             async {
                 return match users.TryGetValue username with
                        | (true, user) when user = password -> true
-                       | _ -> false
-            }
+                       | _ -> false }
 
 type Credentials =
      { Username: string
@@ -35,7 +32,8 @@ let getCreds headerValue =
     let bytes = Convert.FromBase64String value.Parameter
     let creds = (Encoding.UTF8.GetString bytes).Split([|':'|])
 
-    { Username = creds.[0]; Password = creds.[1] }
+    { Username = creds.[0]
+      Password = creds.[1] }
 
 type BasicAuthHandler(options, logger, encoder, clock, userService : IUserService) =
     inherit AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder, clock)
@@ -45,20 +43,20 @@ type BasicAuthHandler(options, logger, encoder, clock, userService : IUserServic
         match request.Headers.TryGetValue "Authorization" with
         | (true, headerValue) ->
             async {
-                let creds = getCreds headerValue.[0]
+            let creds = getCreds headerValue.[0]
 
-                let! userFound = userService.AuthenticateAsync creds.Username creds.Password
+            let! userFound = userService.AuthenticateAsync creds.Username creds.Password
 
-                return match userFound with
-                       | true ->
-                            let claims = [| Claim(ClaimTypes.NameIdentifier, creds.Username); Claim(ClaimTypes.Name, creds.Username) |]
-                            let identity = ClaimsIdentity(claims, this.Scheme.Name)
-                            let principal = ClaimsPrincipal identity
-                            let ticket = AuthenticationTicket(principal, this.Scheme.Name)
-                            AuthenticateResult.Success ticket
-                       | false ->
-                            AuthenticateResult.Fail("Invalid Username or Password")
-            } |> Async.StartAsTask
+            return match userFound with
+                   | true ->
+                        let claims = [| Claim(ClaimTypes.NameIdentifier, creds.Username); Claim(ClaimTypes.Name, creds.Username) |]
+                        let identity = ClaimsIdentity(claims, this.Scheme.Name)
+                        let principal = ClaimsPrincipal identity
+                        let ticket = AuthenticationTicket(principal, this.Scheme.Name)
+                        AuthenticateResult.Success ticket
+                   | false ->
+                        AuthenticateResult.Fail("Invalid Username or Password") }
+            |> Async.StartAsTask
         | (false, _) ->
             task { return AuthenticateResult.Fail("Missing Authorization Header") }
 
