@@ -62,7 +62,7 @@ type BasicAuthHandler(options, logger, encoder, clock, userService : IUserServic
 
 type ApplicationBuilder with
     [<CustomOperationAttribute("use_basic_auth")>]
-    member __.UseBasicAuth(state : ApplicationState) =
+    member __.UseBasicAuth state =
         let middleware (app : IApplicationBuilder) =
             app.UseAuthentication()
 
