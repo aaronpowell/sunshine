@@ -12,6 +12,7 @@ let getAuthToken username password =
 
 let getData authToken baseUri (path : string) =
     let url = Uri(baseUri, path)
+    printfn "Requesting: %s" (url.ToString())
     Http.AsyncRequestString
         ( url.ToString(),
           httpMethod = "GET",
