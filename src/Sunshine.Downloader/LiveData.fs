@@ -19,8 +19,7 @@ let getLiveList getData deviceId =
                |> Array.tryExactlyOne
       with
       | ex ->
-        printfn "Failure getting live list" 
-        printfn "%A" <| ex
+        errorLogger "Failure getting live list" ex
         return None }
 
 let getLiveData getData (deviceId : string) =
@@ -36,6 +35,5 @@ let getLiveData getData (deviceId : string) =
                  |> Array.tryExactlyOne
         with
         | ex ->
-          printfn "Failure getting live data"
-          printfn "%A" <| ex
+          errorLogger "Failure getting live data" ex
           return None }

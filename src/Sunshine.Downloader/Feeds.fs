@@ -3,6 +3,7 @@ module FeedDownloader
 open FeedData
 open FSharp.Data
 open System
+open Utils
 
 let feedUrl = "/v1/feeds/"
 
@@ -24,7 +25,6 @@ let getPgridFeed getData date (deviceId : string) =
                   |> Array.tryExactlyOne
         with
         | ex ->
-            printfn "Failure getting feed"
-            printfn "%A" <| ex
+            errorLogger "Failure getting feed" ex
             return None
     }
