@@ -64,13 +64,7 @@
             "restartPolicy": "always",
             "settings": {
               "image": "${MODULES.Sunshine.Downloader}",
-              "createOptions": {
-                "Env": [
-                  "SUNSHINE_URL=${SunshineUrl}",
-                  "SUNSHINE_USERNAME=${SunshineUser}",
-                  "SUNSHINE_PASSWORD=${SunshinePwd}"
-                ]
-              }
+              "createOptions": {}
             }
           }
         }
