@@ -8,18 +8,19 @@ open IoTWrapper
 
 let gev s = Environment.GetEnvironmentVariable s
 
-let baseUrl = gev "SUNSHINE_URL"
-let username = gev "SUNSHINE_USERNAME"
-let password = gev "SUNSHINE_PASSWORD"
 let iotConnStr = gev "IOT_CONNSTR"
 
 [<EntryPoint>]
 let main _ =
     async {
-    let! iotClient = getIotHubClient iotConnStr
+    let! iotClient = getIoTHubClient iotConnStr
 
-    let token = getAuthToken username password
-    let getData' = getData token (Uri baseUrl)
+    let! twin = iotClient.GetTwinAsync()
+
+    let iotProperties = parseDesiredProperties twin.Properties.Desired
+
+    let token = getAuthToken iotProperties.Inverter.Username iotProperties.Inverter.Password
+    let getData' = getData token (Uri iotProperties.Inverter.Url)
 
     let! specs = getSpec getData'
     let deviceId = specs.Device.DeviceId |> toS

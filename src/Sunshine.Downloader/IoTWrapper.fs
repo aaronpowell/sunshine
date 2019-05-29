@@ -1,11 +1,13 @@
 module IoTWrapper
 open Microsoft.Azure.Devices.Client
+open Microsoft.Azure.Devices.Shared
 open System.Threading.Tasks
 
 type IoTConnectionWrapper =
-  { SendEventAsync : Message -> Task }
+  { SendEventAsync : Message -> Task
+    GetTwinAsync : unit -> Async<Twin> }
 
-let getIotHubClient iotConnStr =
+let getIoTHubClient iotConnStr =
     async {
     return! match iotConnStr with
                               | null | "" ->
@@ -15,8 +17,16 @@ let getIotHubClient iotConnStr =
                                               |> ModuleClient.CreateFromEnvironmentAsync
                                               |> Async.AwaitTask
                                 do! client.OpenAsync() |> Async.AwaitTask
-                                return { SendEventAsync = client.SendEventAsync } }
+                                return { SendEventAsync = client.SendEventAsync
+                                         GetTwinAsync = fun () -> client.GetTwinAsync() |> Async.AwaitTask } }
                               | _ ->
                                 async {
-                                let client = DeviceClient.CreateFromConnectionString(iotConnStr)
-                                return { SendEventAsync = client.SendEventAsync } } }
+                                let client = DeviceClient.CreateFromConnectionString iotConnStr
+                                return { SendEventAsync = client.SendEventAsync
+                                         GetTwinAsync = fun () -> client.GetTwinAsync() |> Async.AwaitTask } } }
+
+open FSharp.Data
+type DesiredProperties = JsonProvider<""" {"inverter":{"username":"user","password":"pass","url":"http://localhost/"},"$version":4} """>
+
+let parseDesiredProperties (data : TwinCollection) =
+  data.ToJson() |> DesiredProperties.Parse
