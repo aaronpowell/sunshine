@@ -8,4 +8,4 @@ az iot hub module-twin update \
 --device-id $DEVICE_ID \
 --hub-name $IoTHubName \
 --module-id SunshineDownloader \
---set properties.desired="{ \"inverter\": { \"username\": \"$SUNSHINEUSER\", \"password\": \"$SUNSHINEPWD\", \"url\": \"$SUNSHINEURL\" } }" >> /dev/null
+--set properties.desired="{ \"inverter\": { \"username\": \"$SUNSHINEUSER\", \"password\": \"$(SUNSHINEPWD)\", \"url\": \"$SUNSHINEURL\" } }" >> /dev/null
