@@ -5,6 +5,7 @@ open LiveDataDownloader
 open FeedDownloader
 open Utils
 open IoTWrapper
+open Logo
 
 let gev s = Environment.GetEnvironmentVariable s
 
@@ -12,6 +13,8 @@ let iotConnStr = gev "IOT_CONNSTR"
 
 [<EntryPoint>]
 let main _ =
+    printLogo()
+    printfn "Welcome to Sunshine"
     async {
     let! iotClient = getIoTHubClient iotConnStr
 

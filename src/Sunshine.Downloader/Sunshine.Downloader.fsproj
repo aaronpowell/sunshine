@@ -13,6 +13,7 @@
     <Compile Include="LiveData.fs" />
     <Compile Include="../Shared/FeedData.fs" />
     <Compile Include="Feeds.fs" />
+    <Compile Include="Logo.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
