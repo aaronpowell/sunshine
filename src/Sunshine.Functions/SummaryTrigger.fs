@@ -12,8 +12,9 @@ open Microsoft.Azure.EventHubs
 open System.Text
 
 type Summary =
-     { [<PartitionKey>] DeviceId: string
+     { [<PartitionKey>] DateStamp: string
        [<RowKey>] MessageId: string
+       DeviceId: string
        CurrentIn: float // Sum Iin for panels
        VoltsIn: float // Sum Vin for panels
        WattsInAggregate: float // Sum Pin for panels
@@ -41,7 +42,8 @@ let trigger
        let timestamp = epoch.AddSeconds(findPoint' "SysTime")
        
        let summary =
-           { DeviceId = deviceId
+           { DateStamp = timestamp.ToString("yyyy-MM-dd")
+             DeviceId = deviceId
              MessageId = messageId
              CurrentIn = (findPoint' "Iin1") + (findPoint' "Iin2")
              VoltsIn = (findPoint' "Vin1") + (findPoint' "Vin2")

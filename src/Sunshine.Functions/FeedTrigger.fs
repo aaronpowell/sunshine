@@ -12,13 +12,15 @@ open System
 open AzureTableUtils
 
 type FeedRaw =
-     { [<PartitionKey>] CorrelationId: string
+     { [<PartitionKey>] DateStamp: string
        [<RowKey>] MessageId: string
+       CorrelationId: string
        RawMessage: string }
 
 type Feed =
-     { [<PartitionKey>] CorrelationId: string
+     { [<PartitionKey>] DateStamp: string
        [<RowKey>] Id: string // this is the timestamp as a string
+       CorrelationId: string
        Value: decimal
        Timestamp: DateTime }
 
@@ -37,17 +39,21 @@ let trigger
 
         let raw = { CorrelationId = correlationId
                     MessageId = messageId
-                    RawMessage = message }
+                    RawMessage = message
+                    DateStamp = DateTime.Now.ToString("yyy-MM-dd") }
 
         let! _ = raw |> Insert |> inTableToClientAsync feedTable
 
         let tableBatch items = inTableAsBatchAsync feedDataTable.ServiceClient feedDataTable.Name items
 
         let ops = feed.Datastreams.Pgrid.Data
-                  |> Array.map((fun d -> { CorrelationId = correlationId
-                                           Id = string d.Timestamp
-                                           Value = d.Value
-                                           Timestamp = DateTime.Parse(d.Timestamp.ToString().Replace("\"", ""))}) >> InsertOrMerge)
+                  |> Array.map((fun d ->
+                                   let ds = DateTime.Parse(d.Timestamp.ToString().Replace("\"", ""))
+                                   { CorrelationId = correlationId
+                                     Id = string d.Timestamp
+                                     Value = d.Value
+                                     Timestamp = ds
+                                     DateStamp = ds.ToString("yyyy-MM-dd")}) >> InsertOrMerge)
                   |> Array.toSeq
                   |> autobatch
                   |> Seq.map tableBatch

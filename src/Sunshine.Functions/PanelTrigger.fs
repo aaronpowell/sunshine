@@ -12,8 +12,9 @@ open Microsoft.Azure.EventHubs
 open System.Text
 
 type PanelInfo =
-     { [<PartitionKey>] Panel: string
+     { [<PartitionKey>] DateStamp: string
        [<RowKey>] Id: string
+       Panel: string
        MessageId: string
        Current: float // Iin#
        Volts: float // Vin#
@@ -38,7 +39,8 @@ let trigger
 
         let storePanel p =
                let panel =
-                   { Panel = p
+                   { DateStamp = timestamp.ToString("yyyy-MM-dd")
+                     Panel = p
                      Id = Guid.NewGuid().ToString()
                      MessageId = messageId
                      Current = findPoint' (sprintf "Iin%s" p)

@@ -12,8 +12,9 @@ open Microsoft.Azure.EventHubs
 open System.Text
 
 type LiveDataEntity =
-     { [<PartitionKey>] DeviceId: string
+     { [<PartitionKey>] DateStamp: string
        [<RowKey>] MessageId: string
+       DeviceId: string
        RawMessage: string
        MessageTimestamp: DateTime // SysTime
        CorrelationId: string }
@@ -34,7 +35,8 @@ let trigger
        let timestamp = epoch.AddSeconds(findPoint' "SysTime")
 
        let rawDataEntity =
-           { DeviceId = deviceId
+           { DateStamp = timestamp.ToString("yyyy-MM-dd")
+             DeviceId = deviceId
              MessageId = messageId
              RawMessage = message
              MessageTimestamp = timestamp
