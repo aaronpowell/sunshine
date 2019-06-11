@@ -25,7 +25,7 @@ The Downloader runs in a Docker container and will either talk to the Mock API (
 
 Deployments are orchestrated using [Azure Pipelines](https://azure.microsoft.com/en-us/services/devops/pipelines/?WT.mc_id=sunshine-github-aapowell) to build the images, push to [Azure Container Registry](https://azure.microsoft.com/en-us/services/container-registry/?WT.mc_id=sunshine-github-aapowell) and then use [Azure IoT Edge](https://azure.microsoft.com/en-us/services/iot-edge/?WT.mc_id=sunshine-github-aapowell) to deploy onto either my test device or my production device.
 
-You'll find more information on the process on my blog through the series [Home Grown IoT](https://www.aaron-powell.com/posts/2019-05-29-home-grown-iot-prologue).
+You'll find more information on the process on my blog through the series [Home Grown IoT](https://www.aaron-powell.com/posts/2019-05-30-home-grown-iot-prologue).
 
 ## Acknowledgements
 
