@@ -13,7 +13,7 @@ let sendIoTMessage<'T> client route  correlationId (obj : 'T) =
     msg.Properties.Add("correlationId", correlationId.ToString())
     msg.Properties.Add("messageId", Guid.NewGuid().ToString())
     printfn "Submitting %s with correlationId %A" route correlationId
-    client.SendEventAsync msg |> Async.AwaitTask
+    client.SendEventAsync msg
 
 let errorLogger msg ex =
     let now = DateTimeOffset.Now
