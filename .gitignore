@@ -15,3 +15,5 @@ packages
 !/.paket/*.targets
 
 .vs
+
+.ionide

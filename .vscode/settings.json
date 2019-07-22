@@ -7,5 +7,11 @@
   "azureFunctions.projectSubpath": "src/Sunshine.Functions/bin/Debug/netcoreapp2.1/",
   "debug.internalConsoleOptions": "neverOpen",
   "FSharp.fsacRuntime": "netcore",
-  "terminal.integrated.shell.windows": "C:\\WINDOWS\\SysWow64\\WindowsPowerShell\\v1.0\\powershell.exe"
+  "terminal.integrated.shell.windows": "C:\\WINDOWS\\SysWow64\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true,
+    "**/packages/**": true
+  }
 }
