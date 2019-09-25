@@ -16,8 +16,11 @@ let sendIoTMessage<'T> client route  correlationId (obj : 'T) =
     client.SendEventAsync msg
 
 let errorLogger msg ex =
-    let now = DateTimeOffset.Now
-    let dateFormat = now.ToString "dd-MM-yy hh:mm:ss"
+    // let now = DateTimeOffset.Now
+    // let dateFormat = now.ToString "dd-MM-yy hh:mm:ss"
 
-    printfn "[%s] %s" dateFormat msg
-    printfn "[%s] %A" dateFormat ex
+    // printfn "[%s] %s" dateFormat msg
+    // printfn "[%s] %A" dateFormat ex
+
+    // I should do some proper logging here
+    ignore()
