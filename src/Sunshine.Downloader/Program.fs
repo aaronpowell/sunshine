@@ -14,7 +14,7 @@ let iotConnStr = gev "IOT_CONNSTR"
 [<EntryPoint>]
 let main _ =
     printLogo()
-    printfn "Welcome to Sunshine"
+    infoLogger <| sprintf "Welcome to Sunshine"
     async {
     let! iotClient = getIoTHubClient iotConnStr
 
@@ -28,7 +28,7 @@ let main _ =
     let! specs = getSpec getData'
     let deviceId = specs.Device.DeviceId |> toS
 
-    printfn "Up and running, we found an inverter with the ID %s" deviceId
+    infoLogger <| sprintf "Up and running, we found an inverter with the ID %s" deviceId
 
     let mutable correlationId = Guid.NewGuid()
 
@@ -57,7 +57,7 @@ let main _ =
         dataPoller() |> Async.Start
 
     | None ->
-        printfn "Well that shouldn't have happened..."
+        infoLogger <| sprintf "Well that shouldn't have happened..."
 
     let rec feedPoller() = async {
         match! getPgridFeed getData' DateTime.Today deviceId with
@@ -69,7 +69,7 @@ let main _ =
 
     feedPoller() |> Async.Start
 
-    printfn "Background jobs running, now we're waiting... "
+    infoLogger <| sprintf "Background jobs running, now we're waiting... "
     if Console.IsInputRedirected then
         while true do
             do! Async.Sleep 300000

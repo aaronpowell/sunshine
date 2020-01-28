@@ -1,6 +1,7 @@
 module Specs
 
 open SpecsData
+open Utils
 
 let urlPath = "/v1/specs"
 
@@ -12,7 +13,7 @@ let getSpec getData =
 
         with
         | _ ->
-            printfn "hmm looks like the API isn't available yet, let's sleep a bit"
+            infoLogger <| sprintf "hmm looks like the API isn't available yet, let's sleep a bit"
 
             do! Async.Sleep 30000
 
