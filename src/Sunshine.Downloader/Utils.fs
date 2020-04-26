@@ -19,12 +19,13 @@ let sendIoTMessage<'T> client route correlationId (obj: 'T) =
     msg.Properties.Add("__messageType", route)
     msg.Properties.Add("correlationId", correlationId.ToString())
     msg.Properties.Add("messageId", Guid.NewGuid().ToString())
-    infoLogger <| sprintf "Submitting %s with correlationId %A" route correlationId
+    // infoLogger <| sprintf "Submitting %s with correlationId %A" route correlationId
     client.SendEventAsync msg
 
 let errorLogger msg ex =
     let now = DateTimeOffset.Now
     let dateFormat = now.ToString "dd-MM-yy hh:mm:ss"
 
-    printfn "[%s] %s" dateFormat msg
-    printfn "[%s] %A" dateFormat ex
+    // printfn "[%s] %s" dateFormat msg
+    // printfn "[%s] %A" dateFormat ex
+    ignore()
